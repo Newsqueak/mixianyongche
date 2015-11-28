@@ -1,0 +1,101 @@
+{% extends "_layout.html" %}
+
+{% block subtitle %}收银台{% endblock %}
+{% block bodyCls %}pay-0{% endblock %}
+{%set hiddenFooter=true %}
+
+{% block content %}
+
+
+<div class="am-panel-group" id="accordion">
+  <div class="am-panel am-panel-default">
+    <div class="am-panel-hd mx-panel-hd">
+      <div><span>从</span>{{data.start_place}}</div>
+      <div><span>到</span>{{data.end_place}}</div>
+      <div>{{data.yc_time}}({{data.yc_city}}时间)</div>
+    </div>
+    <div id="do-not-say-1" class="am-panel-collapse am-collapse">
+      <div class="am-panel-bd mx-panel-hd-2" style="font-size: 80%">
+        <div class="am-g am-g-fixed">
+          <div class="am-u-sm-4 mx-pay-u-sm-3">用车车型</div>
+          <div class="am-u-sm-8">{{data.car_level_desc}}</div>
+        </div>
+
+        <div class="am-g am-g-fixed">
+          <div class="am-u-sm-4 mx-pay-u-sm-3">航班号</div>
+          <div class="am-u-sm-8">{{data.flight_no}}</div>
+        </div>
+        {% if data.service_type==0 %}
+        <div class="am-g am-g-fixed">
+          <div class="am-u-sm-4 mx-pay-u-sm-3">接机牌姓名</div>
+          <div class="am-u-sm-8">{{data.pickup_card_name}}</div>
+        </div>
+        {% endif %}
+        <div class="mx-pay-content">
+          <div><b>注意事项</b></div>
+          {% if data.service_type=="0"%}
+          <div data-t="接机">
+            <div class="am-g  am-g-fixed">
+              <div class="am-u-sm-4 "><b>乘车凭证:</b></div>
+              <div class="am-u-sm-8">
+                <small>付款成功后, 将会通过邮件发送给您乘车凭证, 请打印后, 在乘车时向司机出示。</small>
+              </div>
+            </div>
+            <div class="am-g  am-g-fixed">
+              <div class="am-u-sm-4 "><b>退单规则:</b></div>
+              <div class="am-u-sm-8">
+                <small>距您约定用车时间4个法定工作日以前取消订单, 订单费用全额退还; 否则将扣除您支付的金额。</small>
+              </div>
+            </div>
+            <div class="am-g  am-g-fixed">
+              <div class="am-u-sm-4 "><b>还款服务:</b></div>
+              <div class="am-u-sm-8">
+                <small>如果确实暂时无法安排车辆, 我们会自动将您已支付的金额全款退还至您的支付账号中, 并第一时间电话和邮件通知您。</small>
+              </div>
+            </div>
+          </div>
+          {%else%}
+          <div data-t="送机">
+            <div class="am-g  am-g-fixed">
+              <div class="am-u-sm-4 "><b>退单规则:</b></div>
+              <div class="am-u-sm-8">
+                <small>距您约定用车时间4个法定工作日以前取消订单, 不扣取任何费用; 否则将扣除您支付的金额。</small>
+              </div>
+            </div>
+          </div>
+          {%endif%}
+        </div>
+      </div>
+    </div>
+    <h4 class="am-panel-title mx-pay-dianji" style="font-size: 80%"
+        data-am-collapse="{parent: '#accordion', target: '#do-not-say-1'}">
+      点击展开/收起
+    </h4>
+  </div>
+
+  <div>
+    <div class="pay-1">请选择支付方式</div>
+    <div class="pay-weixin"><i class="am-icon-weixin" style="color:rgba(81,194,50,100);"></i> 微信 <input type="radio" name="doc-radio-1" class="mx-icon-chevron-right" value="option1" checked></div>
+    <!--<div class="pay-weixin"><img src="assets/i/alipay.png" width="5%"> 支付宝 <input type="radio" name="doc-radio-1" class="mx-icon-chevron-right" value="option2"></div>-->
+  </div>
+
+
+  <div data-am-widget="navbar" class="am-navbar am-cf am-navbar-default mx-order-foot ">
+    <ul class="am-navbar-nav am-cf am-avg-sm-4">
+      <li style="flex: 2">
+        <a>
+          <span class="am-navbar-label">用车金额：￥ {{data.car_total_price}}</span>
+        </a>
+      </li>
+
+
+      <li style="background:#f37b1d">
+        <a href="pay.html" class="">
+          <span class="am-navbar-label">去支付</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+</div>
+

@@ -1,0 +1,47 @@
+{% extends "_layout.html"%}
+
+{% block subtitle %}开通城市{% endblock %}
+
+{% set bodyCls='mx-address-bg' %}
+{% set hiddenFooter=true %}
+
+{% block content %}
+
+
+<div data-am-widget="list_news" class="am-list-news am-list-news-default ">
+
+    {% for c1 in data %}
+
+
+    <div class="am-list-news-hd am-cf mx-list-title">
+
+        <a href="" class="">
+            <h3>{{loop.key}}</h3>
+        </a>
+    </div>
+    <div class="am-list-news-bd">
+        <ul class="am-list  mx-list-ul">
+            {%for c2 in c1.cities %}
+            <li class="am-g">
+                <a href="###" class="am-list-item-hd ">{{c2.CITY_CN_NAME}}
+                    {% if c2.online_status==1 %}
+                    {% set openCity="true" %}
+                    {% else %}
+                    {% set openCity="" %}
+                    {%endif%}
+                    <i class="openCity {{openCity}}"></i>
+                </a>
+
+            </li>
+            {%endfor%}
+        </ul>
+    </div>
+    {% endfor %}
+
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock %}

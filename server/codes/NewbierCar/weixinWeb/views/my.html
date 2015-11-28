@@ -1,0 +1,271 @@
+{% extends "_layout.html"%}
+
+{% block subtitle %}我的信息{% endblock %}
+
+{% set bodyCls='mx-orderlist-body-bg' %}
+
+
+{% set my='active' %}
+
+{% block leftTopContent %}
+<a href="usercog">
+	<i class="am-header-icon am-icon-cog"></i>
+</a>
+{%endblock%}
+
+{% block content %}
+
+<div ng-controller="user">
+<div class="mx-my-title">
+	<div class="am-u-sm-12 mx-my-title" style="height: 130px;">
+		<div class="my-avatar" style="background-image: url([[userinfo.avatar_url]]);">
+			<input style="opacity: 0" accept="image/*" id="avatar_input" type="file" onchange="avatarUpload()"
+				   class="am-circle my-avatar"/>
+		</div>
+
+
+		<div ng-bind="userinfo.screen_name"
+			 style=" height: 30px;margin-top: 10px" ng-bing="userinfo.screen_name"
+			 ng-click="edit('screen_name',userinfo.screen_name,'昵称')"></div>
+	</div>
+</div>
+<div class="mx-my-content">
+	
+	<div class="am-g am-g-fixed mx-ordercontent-fixed mx-my-content-1">
+	  <div class="am-u-sm-3 mx-order-fuwu-3 mx-ordercontent-sm-3">姓名</div>
+		<div class="am-u-sm-9 mx-order-fuwu-9 mx-ordercontent-sm-9"
+			 ng-click="edit('official_name',userinfo.official_name,'姓名')">
+			<span class='mx-icon-chevron-right'> <span ng-bind="userinfo.official_name"></span>&#160;&#160;></span>
+		</div>
+	</div>
+	<div class="am-g am-g-fixed mx-ordercontent-fixed mx-my-content-1">
+		<div class="am-u-sm-3 mx-order-fuwu-3 mx-ordercontent-sm-3">性别</div>
+		<div class="am-u-sm-9 mx-order-fuwu-9 mx-ordercontent-sm-9" ng-click="edit('gender',userinfo.gender,'性别')">
+			<span class='mx-icon-chevron-right'>　<span
+					ng-bind="userinfo.gender|sextype"></span>&#160;&#160;></span>
+		</div>
+	</div>
+	<div class="am-g am-g-fixed mx-ordercontent-fixed mx-my-content-1">
+	  <div class="am-u-sm-3 mx-order-fuwu-3 mx-ordercontent-sm-3">出日</div>
+		<div class="am-u-sm-9 mx-order-fuwu-9 mx-ordercontent-sm-9"
+			 id="selectBirthdayLayout">
+			<span class='mx-icon-chevron-right'> <span
+					ng-bind="userinfo.birthday"></span>&#160;&#160;></span>
+		</div>
+	</div>
+	<div class="am-g am-g-fixed mx-ordercontent-fixed mx-my-content-1">
+	  <div class="am-u-sm-3 mx-order-fuwu-3 mx-ordercontent-sm-3">手机</div>
+		<div class="am-u-sm-9 mx-order-fuwu-9 mx-ordercontent-sm-9"><span class='mx-icon-chevron-right'>  <span
+				ng-bind="userinfo.phone"></span>&#160;&#160;&#160;&#160;</span></div>
+	</div> 
+	<div class="am-g am-g-fixed mx-ordercontent-fixed mx-my-content-1">
+	  <div class="am-u-sm-3 mx-order-fuwu-3 mx-ordercontent-sm-3">邮箱</div>
+		<div class="am-u-sm-9 mx-order-fuwu-9 mx-ordercontent-sm-9" ng-click="edit('email',userinfo.email,'邮箱')">
+			<span class='mx-icon-chevron-right'>  <span
+					ng-bind="userinfo.email"></span>&#160;&#160;></span>
+		</div>
+	</div>
+</div>
+
+
+<!------->
+<div class="mx-ordercontent-user">
+	<a class="mx-my-pwd" href="editPsw">修改密码<span
+			class="mx-icon-chevron-right">&#160;&#160;>&#160;&#160;&#160;</span></a>
+</div>
+
+	<!--<div class="am-g am-g-fixed mx-ordercontent-fuwuphone mx-my-out">-->
+	<!--<div class="am-u-sm-12 mx-ordercontent-sm-12"><button type="button" id="doc-confirm-toggle" class="am-btn am-btn-warning am-radius mx-ordercontent-button">退出登陆</button></div>-->
+	<!--</div>-->
+
+</div>
+
+<div class="am-modal " tabindex="-1" id="doc-modal-1">
+	<div class="am-modal-dialog">
+		<div class="am-modal-hd">
+			<span id="doc-modal-title"></span>
+			<a href="javascript: void(0)" class="am-close am-close-spin" data-am-modal-close>&times;</a>
+		</div>
+		<div class="am-modal-bd">
+			<div class="item" id="edit_screen_name">
+				<input type="text" id="screen_name" class="am-modal-prompt-input" placeholder="输入昵称"
+					   pattern="/^[.\n]+$/">
+			</div>
+			<div class="item" id="edit_official_name">
+				<input type="text" id="official_name" class="am-modal-prompt-input" placeholder="请填写护照的名称"
+					   pattern="/^[.\n]+$/">
+			</div>
+			<!--<div id="edit_phone"><input type="text" id="doc-modal-textValue" class="am-modal-prompt-input" ></div>-->
+			<div class="item" id="edit_gender">
+				<label><input type="radio" name="gender" value="0">男</label>
+				&#160;&#160;&#160;
+				<label><input type="radio" name="gender" value="1">女</label>
+			</div>
+			<div class="item" id="edit_email">
+				<input type="text" id="email" class="am-modal-prompt-input" placeholder="正确的邮箱地址"
+					   pattern="/^([0-9A-Za-z\-_\.]+)@([0-9a-z]+\.[a-z]{2,3}(\.[a-z]{2})?)$/g"> >
+			</div>
+			<!--<div class="item" id="edit_birthday">-->
+			<!--<button readonly id="birthday" class="emulatorInput" name="xxx" data-am-datepicker></button>-->
+			<!--</div>-->
+		</div>
+		<div class="am-modal-footer">
+			<!--<span class="am-modal-btn" data-am-modal-cancel>取消</span>-->
+			<span class="am-modal-btn" data-am-modal-confirm>确定</span>
+		</div>
+	</div>
+</div>
+
+<div class="am-modal am-modal-loading am-modal-no-btn" tabindex="-1" id="my-modal-loading">
+	<div class="am-modal-dialog">
+		<div class="am-modal-hd">正在载入...</div>
+		<div class="am-modal-bd">
+			<span class="am-icon-spinner am-icon-spin"></span>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="assets/js/angular.min.js"></script>
+<script>
+	var mxApp = angular.module("mxApp", []).config(['$interpolateProvider',
+		function ($interpolateProvider) {
+			$interpolateProvider.startSymbol('[[');
+			$interpolateProvider.endSymbol(']]');
+		}
+	]);
+	mxApp.filter("sextype", function () {
+		return function (value) {
+			if (value == "1") {
+				return "女";
+			} else {
+				return "男"
+			}
+		};
+	});
+	mxApp.controller("user", function ($scope, $http) {
+		//$scope.userinfo = JSON.parse($.cookie("userinfo"));
+		$scope.userinfo = eval('({{JSON.stringify(data)}})');
+		//$scope.userinfo.avatar_url = "assets/i/car.png";
+		//$scope.userinfo.screen_name = "xxx";
+		$scope.update = function (field, value) {
+			$scope.showloading();
+			var postDate = {};
+			postDate.field = field;
+			postDate.value = value;
+			$.post("userinfoUpdate", postDate).success(function (json) {
+
+				if (json.code == 0) {
+					$scope.userinfo[field] = value;
+					$scope.$apply();
+				} else {
+					alert(json.msg);
+				}
+				$scope.closeloading();
+
+			})
+		}
+		$scope.showloading = function () {
+			$('#my-modal-loading').modal('open');
+		}
+		$scope.closeloading = function () {
+			$('#my-modal-loading').modal('close');
+		}
+		window.onbeforeunload = function () {
+			$.cookie("userinfo", JSON.stringify($scope.userinfo), {maxAge: 5 * 365 * 24 * 60 * 60});
+		}
+		window.avatarUpload = function () {
+			var avatarInput = $('#avatar_input');
+
+			if (avatarInput.val() == "") {
+				return;
+			}
+
+			var files = avatarInput[0].files;
+
+			var data = new FormData();
+
+			if (files) {
+				data.append('avatar', files[0]);
+
+			} else {
+				return;
+			}
+			$scope.showloading();
+			$.ajax({
+				cache: false,
+				type: 'post',
+				dataType: 'json',
+				url: 'http://upload.laobingke.com:80/pics/avatar',
+				data: data,
+				contentType: false,
+				processData: false,
+				success: function (json) {
+					if (json.code == 0) {
+						//alert('上传成功');
+						$scope.update("avatar_url", json.avatar_url);
+						avatarInput.val("");
+					}
+
+				},
+				error: function (e) {
+					avatarInput.val("");
+					$scope.closeloading();
+				}
+			});
+		}
+		$scope.edit = function (field, value, title) {
+			$("#doc-modal-title").html(title);
+			if (field == 'gender') {
+				var radios = $("#edit_gender");
+				radios.find("[value='" + value + "']").attr("checked", "checked");
+
+			}
+			else if (field == 'birthday') {
+				//$("#"+field).html(value);
+			}
+			else {
+				$("#" + field).val(value);
+			}
+
+
+			$("#edit_" + field).show().siblings().hide();
+
+			$('#doc-modal-1').modal({
+				onConfirm: function (e) {
+					var v;
+					if (field == 'gender') {
+						v = radios.find("[name='gender']:checked").val();
+						if (v == undefined) {
+							return
+						}
+						;
+
+					} else {
+						v = $("#" + field).val();
+					}
+					if ($scope.userinfo[field] == v) {
+						return;
+					}
+					$scope.update(field, v);
+
+
+				}
+
+			});
+		};
+		$("#selectBirthdayLayout").datepicker().on('changeDate.datepicker.amui', function (event) {
+			$scope.userinfo.birthday = event.date.Format("yyyy-MM-dd");
+			$scope.update("birthday", $scope.userinfo.birthday);
+			$scope.$apply();
+		})
+
+	});
+
+
+
+
+</script>
+{% endblock %}

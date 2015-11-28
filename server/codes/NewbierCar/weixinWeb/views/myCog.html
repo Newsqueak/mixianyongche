@@ -1,0 +1,86 @@
+{% extends "_layout.html"%}
+
+{% block subtitle %}我的信息{% endblock %}
+
+{% set bodyCls='mx-orderlist-body-bg' %}
+
+
+{% set my='active' %}
+
+{% block leftTopContent %}
+<a href="javascript:self.history.go(-1)">
+    <i class="am-header-icon am-icon-mail-reply"></i>
+</a>
+{%endblock%}
+
+{% block content %}
+
+<div ng-controller="user">
+    <div class="mx-my-title">
+        <div class="am-u-sm-12 mx-my-title" style="height: 130px;">
+            <div class="my-avatar" style="background-image: url([[userinfo.avatar_url]]);">
+                <input style="opacity: 0" accept="image/*" id="avatar_input" type="file" onchange="avatarUpload()"
+                       class="am-circle my-avatar"/>
+            </div>
+
+
+            <div ng-bind="userinfo.screen_name"
+                 style=" height: 30px;margin-top: 10px" ng-bing="userinfo.screen_name"
+                 ng-click="edit('screen_name',userinfo.screen_name,'昵称')"></div>
+        </div>
+    </div>
+
+    <div class="am-g am-g-fixed mx-ordercontent-fuwuphone mx-my-out">
+        <div class="am-u-sm-12 mx-ordercontent-sm-12">
+            <button onclick="logout()" type="button" ngcl id="doc-confirm-toggle"
+                    class="am-btn am-btn-warning am-radius mx-ordercontent-button">
+                退出登陆
+            </button>
+        </div>
+    </div>
+
+</div>
+
+<div class="am-modal " tabindex="-1" id="doc-modal-1">
+    <div class="am-modal-dialog">
+        <div class="am-modal-hd">
+            <span id="doc-modal-title">提示</span>
+            <a href="javascript: void(0)" class="am-close am-close-spin" data-am-modal-close>&times;</a>
+        </div>
+        <div class="am-modal-bd">
+            确认退出吗?
+        </div>
+
+        <div class="am-modal-footer">
+            <span class="am-modal-btn" data-am-modal-cancel>取消</span>
+            <span class="am-modal-btn" data-am-modal-confirm>确定</span>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+<script src="assets/js/angular.min.js"></script>
+<script>
+
+    function logout() {
+        $("#doc-modal-1").modal({
+            onConfirm: function (e) {
+                self.location.href = "logout";
+            }
+        })
+        $.cookie("userinfo", {maxAge: -1});
+    }
+    var mxApp = angular.module("mxApp", []).config(['$interpolateProvider',
+        function ($interpolateProvider) {
+            $interpolateProvider.startSymbol('[[');
+            $interpolateProvider.endSymbol(']]');
+        }
+    ]);
+    mxApp.controller("user", function ($scope, $http) {
+        $scope.userinfo = JSON.parse($.cookie("userinfo"));
+    })
+</script>
+{% endblock %}

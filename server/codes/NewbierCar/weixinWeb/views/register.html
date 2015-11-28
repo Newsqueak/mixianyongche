@@ -1,0 +1,147 @@
+{% extends "_layout.html"%}
+
+{% block subtitle %}注册{% endblock %}
+
+{% set bodyCls='mx-orderlist-body-bg' %}
+{% set hiddenHeader=true %}
+{% set hiddenFooter=true %}
+{% block content %}
+
+<div class="register" ng-controller="reg">
+	<div class="am-g am-g-fixed">
+		<div class="am-u-sm-6 mx-login-sm-6"><img src="assets/i/f.png" width=7%;></div>
+		<div class="am-u-sm-6 "><img class="mx-icon-chevron-right" src="assets/i/c.png" width=20%;></div>
+		<div class="am-u-sm-12 mx-login-sm-12">
+			<img src="assets/i/reg-2.png" width=25%;>
+			<img src="assets/i/reg-3.png" style="display: block;margin: auto;width: 50%">
+		</div>
+
+	</div>
+
+	<form action="" name="regForm" id="regForm" class="am-form am-form-inline mx-login-form">
+		<div class="am-form-group am-form-icon login-input1">
+			<i class="am-icon-mobile-phone login-input-icon"></i>
+			<input type="tel" class="am-form-field am-radius" name="phone" ng-model="regInfo.phone"
+				   placeholder="请输入手机号" ng-minlength="4" required>
+	  </div>
+
+		<div class="am-form-group am-form-icon login-input2">
+			<i class="am-icon-unlock-alt login-input-icon"></i>
+			<input type="text" class="am-form-field am-radius" name="password" ng-model="regInfo.password"
+				   ng-minlength="6" ng-maxlength="20" placeholder="6-20数字或字母" required>
+	  </div>
+
+		<div class="am-g  mx-register-y">
+			<div class="am-u-sm-7"><input ng-model="regInfo.captcha" type="text" class="am-form-field " placeholder="">
+			</div>
+			<div class="am-u-sm-5">
+				<button id="sendSMSBtn" type="button" ng-click="sendSMS()"
+						class="am-btn am-btn-success am-btn-block am-radius">获取验证码
+				</button>
+			</div>
+	  </div>
+
+		<button type="button" ng-click="submit()" class="am-btn am-btn-block btn-action btn-action-yellow">确定</button>
+	</form>
+
+	
+	<div class="am-g am-g-fixed">
+	  <div class="am-u-sm-12 mx-login-repwd"><!--忘记密码？--></div>
+	</div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="assets/js/angular.min.js"></script>
+<script type="text/javascript">
+
+
+	var mxApp = angular.module("mxApp", []).config(['$interpolateProvider',
+		function ($interpolateProvider) {
+			$interpolateProvider.startSymbol('[[');
+			$interpolateProvider.endSymbol(']]');
+		}
+	]);
+	mxApp.controller("reg", function ($scope, $http) {
+		$scope.regInfo = {};
+		$scope.regInfo.phone = "";
+		$scope.regInfo.country_code = "86";
+		$scope.regInfo.password = "";
+		$scope.regInfo.captcha = "";
+		$scope.sendSMS = function () {
+			if ($scope.regForm.phone.$invalid) {
+				alert("请正确输入手机号")
+				return;
+			}
+
+			$http.post('/mxyc/web/registerSendSMS', $scope.regInfo).success(function (json) {
+				switch (json.code) {
+					case 0:
+						alert("短信已经发送，请稍等")
+						break;
+					case 1:
+						alert(json.msg);
+						break;
+					case 2:
+						alert("用户已经存在,你可地直接登录")
+						break;
+					default :
+						alert(json.msg);
+				}
+			}).error(function (err) {
+				alert(err);
+			})
+		}
+		$scope.smsTime = 10;
+		$scope.enabledAgainSMS = function () {
+			$scope.smsTime--;
+			if ($scope.smsTime == -1) {
+				$("#sendSMSBtn").attr("readonly", false);
+			} else {
+				setTimeout(arguments.callee, 1000)
+			}
+
+			//$scope.enabledAgainSMS
+
+		}
+		$scope.submit = function () {
+			if ($scope.regForm.phone.$invalid) {
+				alert("请正确输入手机号")
+				return;
+			}
+			if ($scope.regInfo.captcha == "") {
+				alert("请输入短信验证码")
+				return;
+			}
+
+			if ($scope.regForm.password.$invalid) {
+				alert("请确保输入的是有效密码格式")
+				return;
+			}
+
+			$http.post('/mxyc/web/registerSubmit', $scope.regInfo).success(function (json) {
+				switch (json.code) {
+					case 0:
+						alert("恭喜您，注册成功!");
+						self.location.href = "userinfo";
+						break;
+					case 1:
+						break;
+						alert(json.msg);
+					case 2:
+						alert("用户已经存在,你可地直接登录")
+						break;
+					default :
+						alert(json.msg);
+				}
+			}).error(function (err) {
+				alert(err);
+			})
+		}
+	})
+
+
+</script>
+{% endblock %}

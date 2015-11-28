@@ -1,0 +1,52 @@
+{% extends "_layout.html"%}
+
+{% block subtitle %}重置密码 1/2{% endblock %}
+
+{% set bodyCls='mx-orderlist-body-bg' %}
+
+{% set hiddenFooter=true %}
+{% set my='active' %}
+
+{% block content %}
+<style>
+
+    .vercode {
+        overflow: hidden;
+        height: 0;
+        transition: height .3s;
+        -webkit-transition: height .3s;
+    }
+
+    .vercode-show {
+        height: 100px;
+
+    }
+
+</style>
+<div class="am-container">
+    <div class="full-panel">
+        手机号:<input type="number" class="full-panel-input" placeholder="请输入注册时的手机号"/>
+    </div>
+
+    <input type="submit" class="am-btn btn-action am-btn-block" value="验证手机号" onclick="vercodeShow()"/>
+
+    <div class="am-form vercode" style="margin-top: 2rem">
+        <div class="am-u-sm-6">
+            <input type="number" class="am-form-field am-radius" placeholder="输入验证码">
+        </div>
+        <div class="am-u-sm-6">
+            <input type="submit" class="am-btn btn-action am-btn-block" value="验证"/>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function vercodeShow() {
+        $(".vercode").addClass("vercode-show");
+    }
+</script>
+{% endblock %}

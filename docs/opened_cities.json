@@ -1,0 +1,280 @@
+{
+    "泰国": {
+        "code": "66",                                    //该国家的电话号码的区号码
+        "cities": [
+            {
+                "CITY_CN_NAME": "曼谷",                //城市中文名
+                "CITY_EN_NAME": "Bangkok",            //城市英文名
+                "online_status": "1"                 //是否上线，1是已经上线， 0是即将上线
+            },
+            {
+                "CITY_CN_NAME": "普吉岛",
+                "CITY_EN_NAME": "Phuket",
+                "online_status": "1"
+            },
+            {
+                "CITY_CN_NAME": "清迈",
+                "CITY_EN_NAME": "Chiang Mai",
+                "online_status": "1"
+            }
+        ]
+    },
+    "台湾": {
+        "code": "886",
+        "cities": [
+            {
+                "CITY_CN_NAME": "台北",
+                "CITY_EN_NAME": "Taipei",
+                "online_status": "1"
+            },
+            {
+                "CITY_CN_NAME": "高雄",
+                "CITY_EN_NAME": "Kaohsiung",
+                "online_status": "1"
+            }
+        ]
+    },
+    "香港": {
+        "code": "852",
+        "cities": [
+            {
+                "CITY_CN_NAME": "香港",
+                "CITY_EN_NAME": "Hongkong",
+                "online_status": "0"
+            }
+        ]
+    },
+    "越南": {
+        "code": "84",
+        "cities": [
+            {
+                "CITY_CN_NAME": "胡志明",
+                "CITY_EN_NAME": "Ho Chi Minh",
+                "online_status": "1"
+            }
+        ]
+    },
+    "尼泊尔": {
+        "code": "977",
+        "cities": [
+            {
+                "CITY_CN_NAME": "加德满都",
+                "CITY_EN_NAME": "Katmandu",
+                "online_status": "1"
+            }
+        ]
+    },
+    "菲律宾": {
+        "code": "63",
+        "cities": [
+            {
+                "CITY_CN_NAME": "沙巴",
+                "CITY_EN_NAME": "Sabah",
+                "online_status": "1"
+            },
+            {
+                "CITY_CN_NAME": "马尼拉",
+                "CITY_EN_NAME": "Manila",
+                "online_status": "0"
+            }
+        ]
+    },
+    "西班牙": {
+        "code": "34",
+        "cities": [
+            {
+                "CITY_CN_NAME": "巴塞罗那",
+                "CITY_EN_NAME": "Barselona",
+                "online_status": "1"
+            }
+        ]
+    },
+    "英国": {
+        "code": "44",
+        "cities": [
+            {
+                "CITY_CN_NAME": "伦敦",
+                "CITY_EN_NAME": "London",
+                "online_status": "1"
+            }
+        ]
+    },
+    "加拿大": {
+        "code": "1",
+        "cities": [
+            {
+                "CITY_CN_NAME": "多伦多",
+                "CITY_EN_NAME": "Toronto",
+                "online_status": "1"
+            },
+            {
+                "CITY_CN_NAME": "温哥华",
+                "CITY_EN_NAME": "Vancouver",
+                "online_status": "1"
+            }
+        ]
+    },
+    "韩国": {
+        "code": "82",
+        "cities": [
+            {
+                "CITY_CN_NAME": "首尔",
+                "CITY_EN_NAME": "Seoul",
+                "online_status": "1"
+            },
+            {
+                "CITY_CN_NAME": "济州岛",
+                "CITY_EN_NAME": "Jeju Island",
+                "online_status": "0"
+            }
+        ]
+    },
+    "新加坡": {
+        "code": "65",
+        "cities": [
+            {
+                "CITY_CN_NAME": "新加坡",
+                "CITY_EN_NAME": "Singpore",
+                "online_status": "0"
+            }
+        ]
+    },
+    "澳门": {
+        "code": "853",
+        "cities": [
+            {
+                "CITY_CN_NAME": "澳门",
+                "CITY_EN_NAME": "Macau",
+                "online_status": "0"
+            }
+        ]
+    },
+    "日本": {
+        "code": "81",
+        "cities": [
+            {
+                "CITY_CN_NAME": "东京",
+                "CITY_EN_NAME": "Tokyo",
+                "online_status": "0"
+            },
+            {
+                "CITY_CN_NAME": "大阪",
+                "CITY_EN_NAME": "Osaka",
+                "online_status": "0"
+            }
+        ]
+    },
+    "马来西亚": {
+        "code": "60",
+        "cities": [
+            {
+                "CITY_CN_NAME": "吉隆坡",
+                "CITY_EN_NAME": "Kuala Lumpur",
+                "online_status": "0"
+            }
+        ]
+    },
+    "美国": {
+        "code": "1",
+        "cities": [
+            {
+                "CITY_CN_NAME": "洛杉矶",
+                "CITY_EN_NAME": "LA",
+                "online_status": "0"
+            },
+            {
+                "CITY_CN_NAME": "纽约",
+                "CITY_EN_NAME": "New York",
+                "online_status": "0"
+            },
+            {
+                "CITY_CN_NAME": "奥克兰",
+                "CITY_EN_NAME": "Aukland",
+                "online_status": "0"
+            },
+            {
+                "CITY_CN_NAME": "旧金山",
+                "CITY_EN_NAME": "San Francisco",
+                "online_status": "0"
+            }
+        ]
+    },
+    "法国": {
+        "code": "33",
+        "cities": [
+            {
+                "CITY_CN_NAME": "巴黎",
+                "CITY_EN_NAME": "Paris",
+                "online_status": "0"
+            }
+        ]
+    },
+    "澳大利亚": {
+        "code": "61",
+        "cities": [
+            {
+                "CITY_CN_NAME": "悉尼",
+                "CITY_EN_NAME": "Sydney",
+                "online_status": "0"
+            },
+            {
+                "CITY_CN_NAME": "墨尔本",
+                "CITY_EN_NAME": "Melbourne",
+                "online_status": "0"
+            }
+        ]
+    },
+    "印度尼西亚": {
+        "code": "62",
+        "cities": [
+            {
+                "CITY_CN_NAME": "巴厘岛",
+                "CITY_EN_NAME": "Bali Island",
+                "online_status": "0"
+            }
+        ]
+    },
+    "俄罗斯": {
+        "code": "7",
+        "cities": [
+            {
+                "CITY_CN_NAME": "莫斯科",
+                "CITY_EN_NAME": "Moscow",
+                "online_status": "0"
+            }
+        ]
+    },
+    "沙特": {
+        "code": "966",
+        "cities": [
+            {
+                "CITY_CN_NAME": "迪拜",
+                "CITY_EN_NAME": "Dubai",
+                "online_status": "0"
+            }
+        ]
+    },
+    "country_count": 20,
+    "countries": [
+        "泰国",
+        "台湾",
+        "香港",
+        "越南",
+        "尼泊尔",
+        "菲律宾",
+        "西班牙",
+        "英国",
+        "加拿大",
+        "韩国",
+        "新加坡",
+        "澳门",
+        "日本",
+        "马来西亚",
+        "美国",
+        "法国",
+        "澳大利亚",
+        "印度尼西亚",
+        "俄罗斯",
+        "沙特"
+    ]
+}

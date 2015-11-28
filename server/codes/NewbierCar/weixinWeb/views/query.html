@@ -1,0 +1,538 @@
+{% extends "_layout.html"%}
+
+{% block subtitle %}查询{% endblock %}
+{% set bodyCls='queryBg' %}
+
+{% block leftTopContent %}
+<a href="openCities" class="">
+    开通城市
+</a>
+{% endblock %}
+
+{% block content %}
+
+<div ng-controller="query">
+    <div class="am-tabs" data-am-tabs>
+        <ul class="am-tabs-nav am-nav am-nav-tabs am-nav-justify">
+            <li class="am-active"><a href="#tab1" ng-click="selectType(0)">海外接机</a></li>
+            <li><a href="#tab2" ng-click="selectType(1)">海外送机</a></li>
+        </ul>
+
+        <div class="am-tabs-bd">
+            <div class="am-tab-panel am-fade am-in am-active am-container" id="tab1">
+                <form action="cars" ng-submit="orderSubmit()" method="post" id="jjForm" name="jjForm">
+                    <input type="hidden" value="0" name="JIEJI_SONGJI">
+
+                    <div class="flex-center after-arrow">
+                        <i class="icon icon-datepicker"></i>
+                        <input class="line-input" type="text"
+                               ng-model="jjOrder.book_date" id="jjDate" name="book_date"
+                               placeholder="起飞时间" readonly required/>
+                    </div>
+
+                    <div class="flex-center after-arrow">
+                        <i class="icon icon-fly"></i>
+                        <input type="text" ng-change="jjClearAddress()" ng-model="jjOrder.flight_no"
+                               name="flight_no"
+                               placeholder="航班号(如中转，请输入最后一班航班)"
+                               class="line-input" required/>
+                    </div>
+
+                    <div class="flex-center after-arrow">
+                        <i class="icon icon-to"></i>
+                        <input type="hidden" ng-model="jjOrder.place_id" value="[[jjOrder.place_id]]" name="place_id"
+                               required/>
+                        <input ng-click="loadAddress()" ng-model="jjOrder.place_name" type="text" placeholder="送达地点"
+                               class="line-input" readonly="readonly" required/>
+
+                    </div>
+
+                    <div class="flex-center " style="padding-top: .8rem" onclick="$('#member').modal()">
+
+                        <i class="icon icon-person"></i>
+
+                        <div>
+                            <input ng-model="jjOrder.adult_count" name="adult_count" style="display: none;">
+                            <input ng-model="jjOrder.child_count" name="child_count" style="display: none;">
+                            <input ng-model="jjOrder.baby_count" name="baby_count" style="display: none;">
+							<span>
+								<span ng-bind="jjOrder.adult_count"></span> 成人&nbsp;&nbsp;
+								<span ng-bind="jjOrder.child_count"></span> 儿童&nbsp;&nbsp;
+								<span ng-bind="jjOrder.baby_count"></span> 婴儿
+							</span>
+                        </div>
+
+
+                    </div>
+
+                    <br>
+
+                    <input type="submit" class="am-btn btn-action am-btn-block" value="立即订车"
+                           ng-disabled="jjForm.$invalid || (jjOrder.adult_count)==0"/>
+
+
+                    <div id="jjAirline" class="airline-info ">
+                        <div class="title">航班信息: - [[jjAirline.airline_company]]</div>
+                        <div class="row">
+                            起飞地点 : [[jjAirline.dep_cityname]] - [[jjAirline.dep_airport]]
+                        </div>
+                        <div class="row">
+                            起飞时间 : [[jjAirline.dep_time]]
+                        </div>
+
+                        <div class="row">
+                            降落时间 : [[jjAirline.arr_time]]
+                        </div>
+                        <div class="row">
+                            降落地点 : [[jjAirline.arr_cityname]] - [[jjAirline.arr_airport]]
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+
+            <div class="am-tab-panel am-fade am-container" id="tab2">
+                <form action="cars" ng-submit="orderSubmit()" method="post" id="sjForm" name="sjForm">
+                    <input type="hidden" value="1" name="JIEJI_SONGJI">
+
+                    <div class="flex-center after-arrow">
+                        <i class="icon icon-datepicker"></i>
+                        <input class="line-input" type="text"
+                               id="sjDate" ng-model="sjOrder.book_date" name="book_date" placeholder="起飞时间"
+                               data-am-datepicker
+                               readonly required/>
+                    </div>
+
+                    <div class="flex-center after-arrow">
+                        <i class="icon icon-fly"></i>
+                        <input type="text" ng-change="sjClearAddress()" ng-model="sjOrder.flight_no" placeholder="航班号"
+                               class="line-input"
+                               name="flight_no"
+                               required/>
+                    </div>
+
+                    <div class="flex-center after-arrow">
+                        <i class="icon icon-from"></i>
+                        <input type="hidden" ng-model="sjOrder.place_id" value="[[sjOrder.place_id" name="place_id"
+                               required/>
+                        <input ng-click="loadAddress()" ng-model="sjOrder.place_name" type="text" id="doc-ds-ipt-1"
+                               placeholder="出发地点" class="line-input"
+                               readonly="readonly" required/>
+
+                    </div>
+
+                    <div class="flex-center " style="padding-top: .8rem" data-am-modal="{target: '#member'}">
+
+                        <i class="icon icon-person"></i>
+
+                        <div>
+                            <input ng-model="sjOrder.adult_count" name="adult_count" style="display: none;">
+                            <input ng-model="sjOrder.child_count" name="child_count" style="display: none;">
+                            <input ng-model="sjOrder.baby_count" name="baby_count" style="display: none;">
+							<span>
+								<span ng-bind="sjOrder.adult_count"></span> 成人&nbsp;&nbsp;
+								<span ng-bind="sjOrder.child_count"></span> 儿童&nbsp;&nbsp;
+								<span ng-bind="sjOrder.baby_count"></span> 婴儿
+							</span>
+                        </div>
+
+
+                    </div>
+                    <br>
+                    <input type="submit" ng-disabled="sjForm.$invalid || (sjOrder.adult_count)==0"
+                           class="am-btn btn-action am-btn-block" value="立即订车"/>
+
+
+                    <div id="sjAirline" class="airline-info ">
+                        <div class="title">航班信息: - [[sjAirline.airline_company]]</div>
+                        <div class="row">
+                            起飞地点 : [[sjAirline.dep_cityname]] - [[sjAirline.dep_airport]]
+                        </div>
+                        <div class="row">
+                            起飞时间 : [[sjAirline.dep_time]]
+                        </div>
+
+                        <div class="row">
+                            降落时间 : [[sjAirline.arr_time]]
+                        </div>
+                        <div class="row">
+                            降落地点 : [[sjAirline.arr_cityname]] - [[sjAirline.arr_airport]]
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+
+    </select>
+    <!--成员-->
+    <div class="am-modal am-modal-alert" tabindex="-1" id="member">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd mx-order-modal-hd">乘客数</div>
+            <div class="am-modal-bd">
+
+                <div class="am-g am-g-fixed" style="margin-top:7%;">
+                    <div class="am-u-sm-4">成人</div>
+                    <div class="am-u-sm-4">儿童</div>
+                    <div class="am-u-sm-4">婴儿</div>
+                </div>
+
+                <div class="am-g am-g-fixed selectNumber-mask" style="margin-top:3%;">
+
+
+                    <div class="am-u-sm-4 selectNumber " id="adult" ng-scroll>
+                        <div class="selectNumber-item" ng-repeat="x in memberNumber track by $index">[[x]]</div>
+                    </div>
+                    <div class="am-u-sm-4 selectNumber" id="child" ng-scroll>
+
+                        <div class="selectNumber-item" ng-repeat="x in memberNumber track by $index">[[x]]</div>
+                    </div>
+                    <div class="am-u-sm-4 selectNumber" id="baby" ng-scroll>
+
+                        <div class="selectNumber-item" ng-repeat="x in memberNumber track by $index">[[x]]</div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="am-modal-footer">
+                <span class="am-modal-btn" id="am-modal-btn" data-am-modal-cancel>确定</span>
+            </div>
+        </div>
+    </div>
+
+    <!--酒店-->
+    <div class="am-modal am-modal-alert" tabindex="-1" id="address">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd mx-title">选择酒店</div>
+            <div class="am-modal-hd mx-title">
+                <div class="am-form-group am-form-icon" style="margin-bottom:.8rem">
+                    <i class="am-icon-search"></i>
+                    <input type="text" ng-model="seachword" class="am-form-field am-radius mx-address-radius"
+                           placeholder="支持中英文关键字搜索">
+                </div>
+            </div>
+            <div class="am-modal-bd "
+                 style="height: 50vh;overflow-y: auto; padding-left: 0;padding-right: 0;padding-bottom: 1px; background: rgba(251,248,241,100)">
+
+                <div data-am-widget="list_news" class="am-list-news am-list-news-default ">
+                    <div ng-repeat="(key,places) in addresses | seach:seachword" ng-click="selectAddress()">
+                        <div class="am-list-news-hd am-cf mx-list-title address-list-title">
+                            <!--带更多链接-->
+                            <a href="" class="">
+                                <h2 ng-bind="key"></h2>
+                            </a>
+                        </div>
+                        <div class="am-list-news-bd">
+                            <ul class="am-list  mx-list-ul address-list-ul">
+                                <li class="am-g address-list-item" ng-repeat="place in places">
+                                    <a href="#" class="am-list-item-hd place" data-value="[[place.place_id]]"
+                                       ng-bind="place.place_name">
+
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+
+                </div>
+
+            </div>
+            <div class="am-modal-footer">
+                <span class="am-modal-btn">关闭</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!--宣传-->
+<div class="cx-bar fixTop" data-am-modal="{target: '#doc-modal-1'}"></div>
+
+<div class="am-modal am-modal-no-btn" tabindex="-1" id="doc-modal-1">
+    <div class="am-modal-dialog">
+        <div class="am-modal-bd" style="padding: 0;">
+            <img src="assets/i/xc-top.png">
+        </div>
+    </div>
+</div>
+
+<!--宣传-->
+{% endblock %}
+
+{% block scripts %}
+
+<script src="assets/js/angular.min.js"></script>
+
+<script type="text/javascript">
+
+	var ableNumberSelect = false;
+	$.fn.scrollEnd = function (callback, timeout) {
+
+		$(this).scroll(function () {
+			if (!ableNumberSelect) {
+				return;
+			}
+			var $this = $(this);
+			if ($this.data('scrollTimeout')) {
+				clearTimeout($this.data('scrollTimeout'));
+			}
+			$this.data('scrollTimeout', setTimeout(callback, timeout));
+		});
+	};
+
+	$('#member').on('open.modal.amui', function () {
+		ableNumberSelect = true;
+	});
+	$('#member').on('close.modal.amui', function () {
+		ableNumberSelect = false;
+	});
+
+
+	var mxApp = angular.module("mxApp",[]).config(['$interpolateProvider',
+		function($interpolateProvider) {
+			$interpolateProvider.startSymbol('[[');
+			$interpolateProvider.endSymbol(']]');
+		}
+	]);
+	mxApp.directive('ngScroll', function () {
+		return {
+			restrict: 'A',
+			link: function (scope, element, attr) {
+				$(element.get(0)).scrollEnd(function () {
+					var $el = $(element);
+					var st = $el.scrollTop();
+					var sh = element.get(0).scrollHeight;
+					var i = Math.floor((st) / 25 + .5);
+					//scope.$emit("updataNumber",[element.get(0).id+"Vaule",i]);
+					if (scope.JIEJI_SONGJI == 0) {
+						scope.jjOrder[element.get(0).id + "_count"] = i;
+					} else {
+						scope.sjOrder[element.get(0).id + "_count"] = i;
+					}
+					scope.$apply();
+
+					$el.scrollTop(i * 25);
+					$el.children().eq(i + 1).addClass("active").siblings().removeClass("active");
+
+				}, 300)
+			}
+		};
+	});
+	mxApp.filter("seach", function () {
+		return function (items, field) {
+			if (field == undefined || field == "") {
+				return items
+			}
+			var result = {};
+			if (items.hasOwnProperty(field.toUpperCase())) {
+				result[field] = items[field];
+			} else {
+				angular.forEach(items, function (value, key) {
+					var newPlaces = [];
+					angular.forEach(value, function (place) {
+						if (place.place_name.indexOf(field) > -1) {
+							newPlaces.push({place_id: place.place_id, place_name: place.place_name});
+						}
+					})
+					if (newPlaces.length != 0) {
+						result[key] = newPlaces;
+					}
+				});
+			}
+			return result;
+		};
+	});
+	var query$scope;
+	mxApp.controller("query",function($scope,$http){
+		query$scope = $scope;
+
+		//出始化日期
+		$('#jjDate').datepicker().on('changeDate.datepicker.amui', function (event) {
+			$scope.jjClearAddress();
+			//$scope.sjOrder.book_date = event.date.toLocaleDateString().replace(/\//g,"-");
+			$scope.$apply();
+		}).bind("focus", function () {
+			document.activeElement.blur();
+			$(this).blur();
+		});
+		;
+		$('#sjDate').datepicker().on('changeDate.datepicker.amui', function (event) {
+			$scope.sjClearAddress();
+			//$scope.sjOrder.book_date = event.date.toLocaleDateString().replace(/\//g,"-");
+			$scope.$apply();
+		}).bind("focus", function () {
+			document.activeElement.blur();
+			$(this).blur();
+		});
+		;
+
+		$scope.JIEJI_SONGJI = 0;
+
+		$scope.seachword = "";
+		$scope.memberNumber=[];
+		$scope.memberNumber.push("");
+		for (var i = 0; i < 31; i++) {
+			$scope.memberNumber.push(i);
+		}
+		$scope.jjOrder = {//接机数据
+			book_date: "",
+			flight_no: "ca823",
+			JIEJI_SONGJI: 0,
+			place_id: "",
+			place_name: "",
+			adult_count: 1,
+			child_count: 0,
+			baby_count: 0
+		}
+		$scope.sjOrder = {//送机数据
+			book_date: "",
+			flight_no: "ca824",
+			JIEJI_SONGJI: 1,
+			place_id: "",
+			place_name: "",
+			adult_count: 0,
+			child_count: 0,
+			baby_count: 0
+		}
+
+		$scope.addresses = [];
+		//$scope.memberNumber.push("");
+		$scope.jjAirline = {//接机信息
+			flight_no: "",
+			dep_airport: "",
+			dep_cityname: "",
+			dep_citycode: "",
+			dep_time: "",
+			arr_airport: "",
+			arr_cityname: "",
+			arr_citycode: "",
+			arr_time: "",
+			airline_company: ""
+		}
+		$scope.sjAirline = {//送机信息
+			flight_no: "",
+			dep_airport: "",
+			dep_cityname: "",
+			dep_citycode: "",
+			dep_time: "",
+			arr_airport: "",
+			arr_cityname: "",
+			arr_citycode: "",
+			arr_time: "",
+			airline_company: ""
+		}
+		$scope.selectType = function (val) {
+			$scope.JIEJI_SONGJI = parseInt(val, 10);
+		}
+		$scope.jjClearAddress = function () {
+			$scope.jjOrder.place_id = "";
+			$scope.jjOrder.place_name = "";
+		}
+		$scope.sjClearAddress = function () {
+			$scope.sjOrder.place_id = "";
+			$scope.sjOrder.place_name = "";
+		}
+		//如果存cookie
+		var temOrder = $.cookie('temOrder');
+		if (temOrder != undefined && temOrder.order_no != undefined && temOrder.order_no != "") {
+			var isJson = false
+			try {
+				temOrder = JSON.parse(temOrder);
+				isJson = true;
+			} catch (e) {
+			}
+			if (isJson === true) {
+				if (temOrder.JIEJI_SONGJI == 0) {
+					$scope.JIEJI_SONGJI = 0;
+					$scope.jjOrder = temOrder;
+					$scope.jjAirline = JSON.parse($.cookie('airline'));
+				} else {
+					$scope.JIEJI_SONGJI = 1;
+					$scope.sjOrder = temOrder;
+					$scope.sjAirline = JSON.parse($.cookie('airline'));
+				}
+			}
+		}
+		$scope.orderSubmit = function () { //write cookie
+			if ($scope.JIEJI_SONGJI == 0) {
+				$.cookie('airline', JSON.stringify($scope.jjAirline));
+				$.cookie('temOrder', JSON.stringify($scope.jjOrder));
+			} else {
+				$.cookie('airline', JSON.stringify($scope.sjAirline));
+				$.cookie('temOrder', JSON.stringify($scope.sjOrder));
+			}
+
+			return false;
+		}
+		$scope.selectAddress = function () { //select address
+			var nowOrder;
+			if ($scope.JIEJI_SONGJI == 0) {
+				nowOrder = $scope.jjOrder;
+			} else {
+				nowOrder = $scope.sjOrder;
+			}
+
+			var t = $(event.target);
+			if (event.target.tagName == "A" && t.hasClass("place")) {
+				nowOrder.place_id = t.data("value");
+				nowOrder.place_name = t.text();
+				$("[name=place_id]").val(nowOrder.place_id)
+				$("#address").modal("close");
+			}
+		}
+		$scope.loadAddress=function(){
+			var flight_no, book_date;
+			if ($scope.JIEJI_SONGJI == 0) {
+				$scope.jjOrder.book_date = $("#jjDate").val();
+				if ($scope.jjOrder.book_date == "" || $scope.jjOrder.flight_no == "") {
+					return;
+				}
+				flight_no = $scope.jjOrder.flight_no;
+				book_date = $scope.jjOrder.book_date
+			} else {
+				$scope.sjOrder.book_date = $("#sjDate").val();
+				if ($scope.sjOrder.book_date == "" || $scope.sjOrder.flight_no == "") {
+					return;
+				}
+				flight_no = $scope.sjOrder.flight_no;
+				book_date = $scope.sjOrder.book_date
+			}
+			$http.get('/mxyc/web/addresses?book_date=' + book_date + "&flight_no=" + flight_no + "&JIEJI_SONGJI=" + $scope.JIEJI_SONGJI).success(function (json) {
+				$scope.seachword = "";
+
+				$scope.addresses = json.places;
+				$scope.JIEJI_SONGJI == 0 ?
+						$scope.jjAirline = json.airline :
+						$scope.sjAirline = json.airline;
+				setTimeout(function () {
+					$scope.JIEJI_SONGJI == 0 ?
+							$("#jjAirline").addClass("airline-info-show") :
+							$("#sjAirline").addClass("airline-info-show");
+				}, 1000)
+
+				$("#address").modal();
+			}).error(function (err) {
+				alert(err);
+			})
+
+		}
+		//$scope.$on("updataNumber",function(event,data){
+		//	$scope[data[0]]=data[1];
+		//})
+
+
+	})
+
+
+
+
+
+
+
+
+
+
+</script>
+{% endblock %}

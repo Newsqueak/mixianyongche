@@ -1,0 +1,191 @@
+{% extends "_layout.html"%}
+
+{% block subtitle %}选车{% endblock %}
+{%set hiddenFooter=true %}
+{% set bodyCls='mx-address-bg' %}
+
+{% block leftTopContent %}
+<a href="query">
+	<i class="am-header-icon am-icon-mail-reply"></i>
+</a>
+{%endblock%}
+
+{% block content %}
+<style>
+	.am-slider {
+		-webkit-transform: translateZ(0);
+		-moz-transform: translateZ(0);
+		-ms-transform: translateZ(0);
+		-o-transform: translateZ(0);
+		transform: translateZ(0);
+	}
+
+	.box {
+		-webkit-transform: translateZ(0);
+		-moz-transform: translateZ(0);
+		-ms-transform: translateZ(0);
+		-o-transform: translateZ(0);
+		transform: translateZ(0);
+	}
+</style>
+<div>
+	<div data-am-widget="slider" class="am-slider am-slider-default" data-am-slider='{&quot;animation&quot;:&quot;slide&quot;,&quot;slideshow&quot;:false}'>
+	  <ul class="am-slides">
+		  {% for cars in data.cars %}
+		  {%set type = loop.key%}
+		  {%for car in cars%}
+		  <li>
+			  <div class="box">
+
+				  <img class="pic"
+					   src="{{car.pic_url}}">
+
+				  <div class="mx-slider-desc">
+					  <div class="title">{{car.car_desc}}</div>
+					  <div class="exp">预计{{car.travel_distance}} 约{{car.take_time}}到达</div>
+
+				  </div>
+				  <div class="mx-jingji">{{type|carType}}</div>
+				  <div class="mx-jianjie">
+					  <div class="am-g am-g-fixed">
+						  <div class="am-u-sm-3 "><i class="am-icon-users"></i> * {{car.person_count}}</div>
+						  <div class="am-u-sm-9">建议乘坐{{car.person_count}}名乘客(含儿童)</div>
+					  </div>
+
+					  <div class="am-g am-g-fixed">
+						  <div class="am-u-sm-3  "><i class="am-icon-suitcase"></i> * {{car.baggage_count}}</div>
+						  <div class="am-u-sm-9" style="padding-right: 0">
+							  可放置{{car.baggage_count}}件规格为{{car.baggage_size_claim}}的拉杆箱、手提箱
+						  </div>
+					  </div>
+					  <!--
+                                          <div class="am-g am-g-fixed">
+                                              <div class="am-u-sm-3"><i class="am-icon-car"></i> * 1</div>
+                                              <div class="am-u-sm-9">{{car.car_count}}辆</div>
+                                          </div>
+                    -->
+				  </div>
+				  {% if type.JIEJI_SONGJI==0 %}
+				  <div class="mx-neirong">
+					  <div class="am-g am-g-fixed">
+						  <div class="am-u-sm-3"><a class="am-badge am-badge-warning am-radius">中文服务</a></div>
+						  <div class="am-u-sm-9">安排专业的中文客服为您安排车辆及解决问题</div>
+					  </div>
+
+					  <div class="am-g am-g-fixed">
+						  <div class="am-u-sm-3"><a class="am-badge am-badge-primary am-radius">举牌接机</a></div>
+						  <div class="am-u-sm-9">司机提前在机场出站口持接机牌等待</div>
+					  </div>
+
+					  <div class="am-g am-g-fixed">
+						  <div class="am-u-sm-3"><a class="am-badge am-badge-success am-radius">免费等待</a></div>
+						  <div class="am-u-sm-9">机落地后免费等待90分钟（若飞机延误请及时通知到境内或境外客服人员），航班抵达后若没有找到司机，请务必尽快与客服或司机取得联系</div>
+					  </div>
+
+				  </div>
+				  {% else %}
+				  <div class="mx-neirong">
+					  <div class="am-g am-g-fixed">
+						  <div class="am-u-sm-3"><a class="am-badge am-badge-warning am-radius">中文服务</a></div>
+						  <div class="am-u-sm-9">安排专业的中文客服为您安排车辆及解决问题</div>
+					  </div>
+
+
+					  <div class="am-g am-g-fixed">
+						  <div class="am-u-sm-3"><a class="am-badge am-badge-success am-radius">免费等待</a></div>
+						  <div class="am-u-sm-9">司机将按时到达约定地点接您(请您务必提前与司机或客服取得联系)</div>
+					  </div>
+
+				  </div>
+				  {% endif %}
+				  <div>
+					  <div class="am-g am-g-fixed">
+						  <div class="am-u-sm-8 mx-u-sm-9"
+							   onclick="openInfo({{car.unit_price}},{{car.total_price}},{{car.car_count}},{{car.person_count}})"
+							   data-am-modal="{target: '#doc-modal-1', closeViaDimmer: 0}">
+							  用车金额: <i class="am-icon-cny"></i><b> {{car.total_price}}</b> <i
+								  class="am-icon-chevron-right mx-icon-chevron-right"></i>
+						  </div>
+						  <div onclick='orderFillCar("{{type|carType}}",{{JSON.stringify(car)}})'
+							   class="am-u-sm-4 mx-u-sm-3">提交订单
+						  </div>
+
+					  </div>
+
+				  </div>
+
+			  </div>
+
+		  </li>
+
+		  {%endfor%}
+		  {%endfor%}
+
+	  </ul>
+	</div>
+
+</div>
+
+<div class="am-modal am-modal-no-btn" tabindex="-1" id="doc-modal-1" style="width: 96%;margin-left: -48%">
+	<div class="am-modal-dialog" style="background: transparent">
+		<div class="am-modal-hd mx-order-modal-hd" style="border-radius: 5px 5px 0 0;">费用明细
+	  <a href="javascript: void(0)" class="am-close am-close-spin" data-am-modal-close>&times;</a>
+	</div>
+		<div class="am-modal-bd mx-order-modal-bd" style="background-color: #fbf8f1;border-radius: 0 0 5px 5px;">
+			<div class="am-g am-g-fixed">
+				<br>
+
+				<div class="am-u-sm-4">专车(1-<span id="person_count"></span>座)</div>
+				<div class="am-u-sm-5">
+					<i class="am-icon-cny"></i><span id="oneprice"></span>/辆 x <span id="car_count"></span>
+				</div>
+				<div class="am-u-sm-3" style="color:#f5b963;"><i class="am-icon-cny"></i><span id="allprice1"></span>
+				</div>
+			</div>
+			<hr/>
+			<div class="am-g am-g-fixed">
+				<div class="am-u-sm-9 am-text-right">总额</div>
+				<div class="am-u-sm-3"><i class="am-icon-cny"></i><span id="allprice2"></span></div>
+			</div>
+			<br>
+	</div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+	/*
+	 * {
+
+	 "product_id":   "p:ZsPdxyr7p968AF63",  //产品套餐号，需要传给订单接口
+	 "pic_url": "http://ip:port/1.jpg",       //给微信服务号用，app调本地
+	 "car_desc": "起亚经济型车",
+	 "travel_distance": "47公里",
+	 "take_time": "50分钟",      //客户端拼字符串“预计47公里行程，约50分钟”
+	 "person_count": "3",
+	 "baggage_count": "3",
+	 "baggage_size_claim": "24~28寸",
+	 "car_count":  "3",
+	 "unit_price":  "149.50",    //车单价
+	 "total_price": "448"         //订单总价
+
+	 },
+	 * */
+	function openInfo(oneprice, allprice, car_count, person_count) {
+		$("#oneprice").html(oneprice);
+		$("#car_count").html(car_count);
+		$("#allprice1").html(allprice);
+		$("#allprice2").html(allprice);
+		$("#person_count").html(person_count);
+	}
+	function orderFillCar(type, car) {
+		car.type = type;
+		var temOrder = JSON.parse($.cookie("temOrder"));
+		temOrder.product_id = car.product_id;
+		$.cookie("car", JSON.stringify(car));
+		self.location.href = "orderFilling";
+	}
+</script>
+{% endblock %}

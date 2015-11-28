@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title> 测试上传 </title>
+    <script src="assets/js/jquery.min.js"></script>
+</head>
+<body>
+<p></p>
+
+<p></p>
+
+<input id="ff" type="file" name="上传"/>
+<button onclick="upload()">提交</button>
+<p></p>
+
+<p></p>
+</body>
+</html>
+<script>
+    function upload() {
+        var data = new FormData();
+        var files = $('#ff')[0].files;
+
+        if (files) {
+            data.append('avatar', files[0]);
+
+        }
+        $.ajax({
+            cache: false,
+            type: 'post',
+            dataType: 'json',
+            url: 'http://upload.laobingke.com:80/pics/avatar',
+            data: data,
+            contentType: false,
+            processData: false,
+            success: function (json) {
+                if (json.code == 0) {
+                    //修改avatar
+                    //$.post()
+                }
+
+            },
+            error: function (e) {
+                alert(e);
+            }
+        });
+        /*
+         $.post("uploadFile", data).success(function (result) {
+            alert(result);
+        })
+         */
+    }
+
+</script>

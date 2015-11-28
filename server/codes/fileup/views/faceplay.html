@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <!--not treat any number as a phone number-->
+
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+
+    <meta charset="utf-8">
+    <title>SwapSwop, holy face!</title>
+
+</head>
+<body>
+<div id="boundary" align="center">
+    <header><h1 align="center">Hi, guess who am I</h1></header>
+
+    <div id="stage">
+        <video id="vvv" width="100%" height="30%" preload autoplay controls><!-- poster="foo.jpg"-->
+            <source src="http://{{ serverHost }}/{{ vodId }}.mp4" type="video/mp4">
+        </video>
+    </div>
+
+</div>
+
+</body>
+</html>

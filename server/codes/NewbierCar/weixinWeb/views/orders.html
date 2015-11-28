@@ -1,0 +1,157 @@
+{% extends "_layout.html"%}
+
+{% block subtitle %}
+历史订单
+{% endblock %}
+
+{% set bodyCls='mx-orderlist-body-bg' %}
+{% set order='active' %}
+
+{% block content %}
+<style>
+.am-nav-tabs>li.am-active>a, .am-nav-tabs>li.am-active>a:hover, .am-nav-tabs>li.am-active>a:focus{color: rgba(82,191,136,100);}
+.am-tabs ul li a{color:#FFF;}
+.am-nav-tabs>li>a:hover{background:#FFF; color: rgba(82,191,136,100);}
+.am-nav-tabs.am-nav-justify>li>a{border-bottom:none;}
+.am-nav-tabs.am-nav-justify>.am-active>a, .am-nav-tabs.am-nav-justify>.am-active>a:hover, .am-nav-tabs.am-nav-justify>.am-active>a:focus{border:none;}
+.am-nav-tabs>li>a{border:none;}
+
+.mx-active-left {
+  border: 1px solid #FFF;
+  border-radius: 8px 0 0 8px;
+}
+
+.mx-active-right {
+  border: 1px solid #FFF;
+  border-radius: 0 8px 8px 0;
+}
+.am-tabs-bd .am-tab-panel{padding:0px;}
+.am-tabs-bd{border:none;}
+
+.am-nav-tabs > li.am-active > a, .am-nav-tabs > li.am-active > a:hover, .am-nav-tabs > li.am-active > a:focus {
+  background-color: transparent;
+}
+
+.am-active.mx-active-left, .am-active.mx-active-right {
+  background-color: #fff;
+  color: rgba(82, 191, 136, 100);
+}
+
+</style>
+<div ng-controller="orderList">
+
+<div class="am-tabs mx-tabs" data-am-tabs>
+  <ul class="am-tabs-nav am-nav am-nav-tabs am-nav-justify mx-orderlist-title">
+    <li class="am-active mx-active-left"><a href="#tab1">待付款</a></li>
+    <li class="mx-active-right"><a href="#tab2">已付款</a></li>
+  </ul>
+
+    <div class="am-tabs-bd ng-cloak" ng-cloak>
+    <div class="am-tab-panel am-fade am-in am-active" id="tab1">
+
+        <div class="item" ng-click="orderView(order.order_no)" ng-repeat="order in orders | filter:{ pay_status: 0 }">
+
+        <div class="mx-orderlist-tishi">
+                <span>请在<span ng-bind="order.over_time | mydate"></span>之前付款</span>
+            </div>
+
+            <div class="mx-list-content">
+                <div><b>业务类型：<span ng-bind="order.service_type|serviceType"></span></b><span>
+                    <a class="am-badge am-badge-danger am-radius mx-icon-chevron-right">等待支付</a></span>
+                </div>
+                <div>用车时间：<span ng-bind="order.yc_time | date:'yyyy-MM-dd HH:mm'"></span>(<span
+                        ng-bind="order.yc_city"></span>时间)
+                </div>
+                <div>用车国家：<span ng-bind="order.yc_country"></span></div>
+                <div>出发地：<span ng-bind="order.start_place"></span></div>
+                <div>目的地：<span ng-bind="order.end_place"></span></div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="am-tab-panel am-fade" id="tab2">
+        <div class="mx-list-content" ng-click="orderView(order.order_no)"
+             ng-repeat="order in orders | filter:{ pay_status: 1 }">
+            <div><b>业务类型：<span ng-bind="order.service_type|serviceType"></span></b><span>
+                    <a class="am-badge am-badge-danger am-radius mx-icon-chevron-right">支付成功</a></span>
+            </div>
+            <div>用车时间：<span ng-bind="order.yc_time | date:'yyyy-MM-dd HH:mm'"></span>(<span
+                    ng-bind="order.yc_city"></span>时间)
+            </div>
+            <div>用车国家：<span ng-bind="order.yc_country"></span></div>
+            <div>出发地：<span ng-bind="order.start_place"></span></div>
+            <div>目的地：<span ng-bind="order.end_place"></span></div>
+        </div>
+
+
+    </div>
+  </div>
+</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="assets/js/angular.min.js"></script>
+<script type="text/javascript">
+
+    function logout() {
+        $("#doc-modal-1").modal({
+            onConfirm: function (e) {
+                self.location.href = "logout";
+            }
+        })
+        $.cookie("userinfo", {maxAge: -1});
+    }
+
+    var mxApp = angular.module("mxApp", []).config(['$interpolateProvider',
+        function ($interpolateProvider) {
+            $interpolateProvider.startSymbol('[[');
+            $interpolateProvider.endSymbol(']]');
+        }
+    ]);
+    mxApp.filter("serviceType", function () {
+        return function (item) {
+            if (item == undefined || item == "") {
+                return "";
+            }
+            if (item == '0') {
+                return "接机"
+            } else {
+                return "送机"
+            }
+
+        };
+    });
+    mxApp.filter("mydate", function () {
+        return function (item) {
+            if (item == undefined || item == "") {
+                return "";
+            }
+            var d = new Date(item);
+            return d.Format("yyyy年MM月dd日 hh:mm")
+        };
+    });
+
+    mxApp.controller("orderList", function ($scope, $http) {
+
+        $scope.orders = eval('({{JSON.stringify(orders)}})');
+        if ($scope.orders == false) {
+            $scope.orders = []
+        }
+        ;
+        $scope.orderView = function (id) {
+            for (var order in $scope.orders) {
+                if ($scope.orders[order].order_no == id) {
+                    $.cookie("temOrder", JSON.stringify($scope.orders[order]));
+                }
+            }
+            self.location.href = "orderDetail?order_no=" + id;
+        }
+
+
+    })
+</script>
+
+{% endblock %}

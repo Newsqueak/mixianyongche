@@ -1,0 +1,319 @@
+{% extends "_layout.html"%}
+
+{% block subtitle %}订单填写{% endblock %}
+
+{% set bodyCls='mx-orderlist-body-bg' %}
+{%set hiddenFooter=true %}
+{% set order='active' %}
+
+{% block leftTopContent %}
+<a href="javascript:self.history.go(-1)">
+    <i class="am-header-icon am-icon-mail-reply"></i>
+</a>
+{%endblock%}
+
+{% block content %}
+<div class="mx-orderlist-body-bg" ng-controller="orderFill">
+    <div class="mx-order">
+        <div class="am-g am-g-fixed">
+
+            <div class="am-u-sm-3 mx-order-u-sm-3">
+                出发地
+            </div>
+            <div class="am-u-sm-9" ng-bind="temOrder.startAddress"></div>
+        </div>
+
+        <div class="am-g am-g-fixed">
+            <div class="am-u-sm-3 mx-order-u-sm-3">目的地</div>
+            <div class="am-u-sm-9" ng-bind="temOrder.endAddress"></div>
+        </div>
+
+        <div class="am-g am-g-fixed">
+            <div class="am-u-sm-3 mx-order-u-sm-3">用车时间</div>
+            <div class="am-u-sm-9"><span ng-bind="order_use_car_time | date:'yyyy-MM-dd HH:mm'"></span>(<span
+                    ng-bind="temOrder.order_use_car_cityname"></span>时间)
+            </div>
+        </div>
+
+        <div class="am-g am-g-fixed">
+            <div class="am-u-sm-3 mx-order-u-sm-3">车型</div>
+            <div class="am-u-sm-9"><span ng-bind="car.type"></span>(乘客<span ng-bind="car.person_count"></span>行李<span
+                    ng-bind="car.baggage_count"></span>)
+            </div>
+        </div>
+
+        <div class="am-g am-g-fixed">
+            <div class="am-u-sm-3 mx-order-u-sm-3">用车金额</div>
+            <div class="am-u-sm-9"><i class="am-icon-cny"></i><b class="mx-order-zifei" ng-bind="car.total_price"></b>
+            </div>
+        </div>
+    </div>
+
+    <form action="payment" class="am-form am-form-inline mx-order-form" method="post" id="orderFillForm">
+
+        <div class="am-g am-g-collapse am-g-fixed mx-input">
+            <div class="am-u-sm-3 mx-order-form-3">手机号码</div>
+            <div class="am-u-sm-2">+86<i class="am-icon-chevron-right mx-icon-chevron-right"></i></div>
+            <div class="am-u-sm-7"><input class="mx-order-form-input" ng-model="temOrder.order_phone" ng-trim="true"
+                                          type="tel" placeholder="用于接受短信和通知"/></div>
+        </div>
+        <div class="am-g am-g-collapse am-g-fixed mx-input">
+            <div class="am-u-sm-3 mx-order-form-3">用车人姓名</div>
+            <div class="am-u-sm-9">
+                <input class="mx-order-form-input" type="text" ng-model="temOrder.order_username" ng-trim="true"
+                       ng-blur="nameSome()"
+                       placeholder="请填写护照上英文姓名"/>
+            </div>
+        </div>
+        <div class="am-g am-g-collapse am-g-fixed mx-input">
+            <div class="am-u-sm-3 mx-order-form-3">邮箱</div>
+            <div class="am-u-sm-9"><input class="mx-order-form-input" ng-model="temOrder.order_email" ng-trim="true"
+                                          type="email" placeholder="用于接受乘车凭证!"/></div>
+        </div>
+        <br>
+
+        <div class="am-g am-g-collapse am-g-fixed mx-input">
+            <div class="am-u-sm-10"><b>举牌接机(免费)</b></div>
+
+        </div>
+
+
+        <div ng-show="temOrder.JIEJI_SONGJI==0" class="am-g am-g-collapse am-g-fixed mx-input">
+            <div class="am-u-sm-3 mx-order-form-3">接机牌姓名</div>
+            <div class="am-u-sm-9">
+                <input class="mx-order-form-input" type="text" ng-model="temOrder.order_pickup_card_name "
+                       placeholder="输入接机牌姓名" ng-trim="true"/>
+            </div>
+        </div>
+        <div ng-show="temOrder.JIEJI_SONGJI==1" class="am-g  am-g-fixed mx-input">
+            <div class="am-u-sm-12 ">送机时间提前 <b ng-bind="sj_before_hours"></b> 小时
+                <small>(拖动选择时间)</small>
+            </div>
+            <div class="am-u-sm-12" style="height: 45px;">
+                <div id="hour_silder"></div>
+            </div>
+        </div>
+
+        <div class="am-g am-g-collapse am-g-fixed mx-mingxi">
+            <div class="am-u-sm-10 ">
+                <small>服务明细</small>
+            </div>
+            <div class="am-u-sm-2"></div>
+        </div>
+        <div ng-show="temOrder.JIEJI_SONGJI==0">
+            <div class="am-g am-g-collapse am-g-fixed">
+                <div class="am-u-sm-3 mx-order-fuwu-3"><b>语言服务:</b></div>
+                <div class="am-u-sm-9 mx-order-fuwu-9">
+                    <small>安排专业的中文客服为您安排车辆及解决问题</small>
+                </div>
+            </div>
+            <div class="am-g am-g-collapse am-g-fixed">
+                <div class="am-u-sm-3 mx-order-fuwu-3"><b>机场等候:</b></div>
+                <div class="am-u-sm-9 mx-order-fuwu-9">
+                    <small>飞机落地后免费等待90分钟（若飞机延误请及时通知到境内或境外客服人员），航班抵达后若没有找到司机，请务必尽快与客服或司机取得联系</small>
+                </div>
+            </div>
+            <div class="am-g am-g-collapse am-g-fixed">
+                <div class="am-u-sm-3 mx-order-fuwu-3"><b>全额退款:</b></div>
+                <div class="am-u-sm-9 mx-order-fuwu-9">
+                    <small>距您约定用车时间4个法定工作日以前取消订单, 不扣取任何费用; 否则将扣除您支付的金额</small>
+                </div>
+            </div>
+        </div>
+        <div ng-show="temOrder.JIEJI_SONGJI==1">
+            <div class="am-g am-g-collapse am-g-fixed">
+                <div class="am-u-sm-3 mx-order-fuwu-3"><b>语言服务:</b></div>
+                <div class="am-u-sm-9 mx-order-fuwu-9">
+                    <small>安排专业的中文客服为您安排车辆及解决问题</small>
+                </div>
+            </div>
+            <div class="am-g am-g-collapse am-g-fixed">
+                <div class="am-u-sm-3 mx-order-fuwu-3"><b>机场等候:</b></div>
+                <div class="am-u-sm-9 mx-order-fuwu-9">
+                    <small>司机将按时到达约定地点接您(请您务必提前与司机或客服取得联系)</small>
+                </div>
+            </div>
+            <div class="am-g am-g-collapse am-g-fixed">
+                <div class="am-u-sm-3 mx-order-fuwu-3"><b>全额退款:</b></div>
+                <div class="am-u-sm-9 mx-order-fuwu-9">
+                    <small>距用车时间4个法定工作日以前取消订单, 订单费用全额退还, 否则需扣除您支付的金额</small>
+                </div>
+            </div>
+        </div>
+        <div data-am-widget="navbar" class="am-navbar am-cf am-navbar-default mx-order-foot" id="">
+            <ul class="am-navbar-nav am-cf am-avg-sm-4">
+                <li data-am-modal="{target: '#doc-modal-1', closeViaDimmer: 0, width: 300, height: 180}">
+                    <a>
+                        <span class="am-navbar-label">用车金额：￥<span ng-bind="car.total_price"></span></span>
+                    </a>
+                </li>
+
+                <li data-am-modal="{target: '#doc-modal-1', closeViaDimmer: 0, width: 300, height: 180}">
+                    <a>
+                        <span class="am-navbar-label"> <b>></b></span>
+                    </a>
+                </li>
+                <li style="background:#f37b1d">
+                    <a href="###" class="" ng-click="submit()">
+                        <span class="am-navbar-label">提交订单</span>
+
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="am-modal am-modal-no-btn" tabindex="-1" id="doc-modal-1" style="width: 96%;margin-left: -48%">
+            <div class="am-modal-dialog" style="background: transparent">
+                <div class="am-modal-hd mx-order-modal-hd" style="border-radius: 5px 5px 0 0;">费用明细
+                    <a href="javascript: void(0)" class="am-close am-close-spin" data-am-modal-close>&times;</a>
+                </div>
+                <div class="am-modal-bd mx-order-modal-bd"
+                     style="background-color: #fbf8f1;border-radius: 0 0 5px 5px;">
+                    <div class="am-g am-g-fixed">
+                        <br>
+
+                        <div class="am-u-sm-4" style="padding-right: 0">专车(1-3座)</div>
+                        <div class="am-u-sm-5">
+                            <i class="am-icon-cny"></i><span ng-bind="car.unit_price"></span>/辆 x <span
+                                ng-bind="car.car_count"></span>
+                        </div>
+                        <div class="am-u-sm-3" style="color:#f5b963;"><i class="am-icon-cny"></i><span
+                                ng-bind="car.total_price"></span>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div class="am-g am-g-fixed">
+                        <div class="am-u-sm-9 am-text-right">总额</div>
+                        <div class="am-u-sm-3"><i class="am-icon-cny"></i><span ng-bind="car.total_price"></span></div>
+                    </div>
+                    <br>
+                </div>
+            </div>
+        </div>
+        <!--<div class="am-modal am-modal-no-btn" tabindex="-1" id="doc-modal-1">-->
+        <!--<div class="am-modal-dialog">-->
+        <!--<div class="am-modal-hd mx-order-modal-hd">用车金额说明-->
+        <!--<a href="javascript: void(0)" class="am-close am-close-spin" data-am-modal-close>&times;</a>-->
+        <!--</div>-->
+        <!--<div class="am-modal-bd mx-order-modal-bd">-->
+        <!--<br>-->
+        <!--*您需要在线支付服务定金。<br>-->
+        <!--*如果服务未能提过，阿道夫阿斯蒂芬阿斯顿发生的发生-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</div>-->
+    </form>
+
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+<link rel="stylesheet" href="assets/jquery.ui.slider/jquery-ui.min.css">
+<link rel="stylesheet" href="assets/jquery.ui.slider/jquery-ui.structure.min.css">
+<link rel="stylesheet" href="assets/jquery.ui.slider/jquery-ui.theme.min.css">
+
+<script src="assets/jquery.ui.slider/jquery-ui.min.js"></script>
+
+<script src="assets/js/angular.min.js"></script>
+<script>
+    function openInfo(oneprice, allprice, car_count) {
+        $("#oneprice").html(oneprice);
+        $("#car_count").html(car_count);
+        $("#allprice1").html(allprice);
+        $("#allprice2").html(allprice);
+    }
+    var mxApp = angular.module("mxApp", []).config(['$interpolateProvider',
+        function ($interpolateProvider) {
+            $interpolateProvider.startSymbol('[[');
+            $interpolateProvider.endSymbol(']]');
+        }
+    ]);
+    mxApp.directive('ngBlur', function () {
+        return {
+            restrict: 'A',
+            link: function (scope, element, attr) {
+                element.onblur = function () {
+                    attr();
+                }
+            }
+        };
+    });
+
+    mxApp.controller("orderFill", function ($scope, $http) {
+        $scope.temOrder = JSON.parse($.cookie("temOrder"));
+        $scope.airline = JSON.parse($.cookie("airline"));
+        $scope.car = JSON.parse($.cookie("car"));
+        //填入信息
+        $scope.temOrder.product_id = $scope.car.product_id;
+        $scope.temOrder.order_use_car_time = ""; //用车时间
+        $scope.order_use_car_cityname = ""; //仅做显示
+        $scope.temOrder.order_pickup_card_name = ""; //接机牌姓名
+        $scope.temOrder.order_username = ""; //用车人
+        $scope.temOrder.order_email = "asdf@aa.com";
+        $scope.temOrder.order_country_code = "+86";
+        $scope.temOrder.order_phone = "";
+        $scope.airline.dep_time = new Date($scope.airline.dep_time);
+        $scope.airline.arr_time = new Date($scope.airline.arr_time);
+        $scope.sj_before_hours = 3;
+
+        if ($scope.temOrder.JIEJI_SONGJI == 0) {//  接机
+            $scope.order_use_car_time = new Date($scope.airline.arr_time);
+            $scope.temOrder.order_use_car_cityname = $scope.airline.arr_cityname;
+            $scope.temOrder.startAddress = $scope.airline.arr_airport;
+            $scope.temOrder.endAddress = $scope.temOrder.place_name;
+        } else {
+            var _date = new Date($scope.airline.dep_time);
+            $scope.order_use_car_time_old = _date
+            _date.setHours(-$scope.sj_before_hours + _date.getHours());
+            $scope.order_use_car_time = _date;
+            $scope.temOrder.order_use_car_cityname = $scope.airline.dep_cityname;
+            $scope.temOrder.startAddress = $scope.temOrder.place_name;
+            $scope.temOrder.endAddress = $scope.airline.dep_airport;
+        }
+        $scope.nameSome = function () {
+            if ($scope.temOrder.order_pickup_card_name == "") {
+                $scope.temOrder.order_pickup_card_name = $scope.temOrder.order_username;
+            }
+        }
+        //hour ui slider
+        $("#hour_silder").slider({
+            range: "min",
+            min: 3,
+            max: 12,
+            value: 3,
+            slide: function (event, ui) {
+                $scope.sj_before_hours = parseInt(ui.value, 10);
+                var _date = new Date($scope.order_use_car_time_old);
+                _date.setHours(-$scope.sj_before_hours + _date.getHours());
+                $scope.order_use_car_time = _date;
+                $scope.$apply();
+            }
+        });
+        $scope.submit = function () {
+            if (isNaN(parseInt($scope.temOrder.order_phone))) {
+                alert("请输入正确的手机号码");
+                return;
+            }
+            if ($scope.temOrder.order_username == "") {
+                alert("用车人姓名不能为空");
+                return;
+            }
+            if (!(/^([0-9A-Za-z\-_\.]+)@([0-9a-z]+\.[a-z]{2,3}(\.[a-z]{2})?)$/g).test($scope.temOrder.order_email)) {
+                alert("请输入正确的电子邮箱");
+                return;
+            }
+            if ($scope.temOrder.JIEJI_SONGJI == 0 && $scope.temOrder.order_pickup_card_name == "") {
+                alert("请输入接机牌上添加的姓名");
+                return;
+            }
+            $scope.temOrder.order_use_car_time = $scope.order_use_car_time.Format("yyyy-MM-dd hh:mm");
+//            if ($.cookie("token") != undefined) {
+//                $scope.temOrder.token = $.cookie("token");
+//            }
+            $.cookie("temOrder", JSON.stringify($scope.temOrder));
+            $("form").submit();
+        }
+    })
+</script>
+{% endblock %}

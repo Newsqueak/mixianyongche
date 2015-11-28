@@ -1,0 +1,299 @@
+Maybe an all-in-one cross-social service should take advantage of some general-platformed framework tech like twilio now, rather than balancing all characteristics and features of other platforms. You know that. Given this, as for KOP we could provide a uniform data standard or web service interfaces further more for others to join us directly, not to do the trivial join job everytime on our own. My Point, believe or not~ 
+
+rpm -ivh jre-7u7-linux-x64.rpm 
+
+15652170016
+
+ context.actorSelection(RootActorPath(member.address) / "user" / "jj" / "*") ! PushJsonMsg(Map("s"-> "version.notify")) 
+ 
+"nb2UserParkMsg"
+
+"MD5withRSA"
+
+val resMap = someRoles.map { role =>
+        (role, nodes.valuesIterator.filter(_.hasRole(role)).map(_.address.toString).toSet)
+
+      }.toMap
+
+   log.info(s"member is Up: $member")
+ log.info(s"member is Removed: $member after $previousStatus")
+Map(otherUid -> (token.asInstanceOf[TokenObj], baseInfo)), List((otherUid, System.currentTimeMillis(), isMaster))
+  def resolveOne()(implicit timeout: Timeout): Future[ActorRef] = {
+    implicit val ec = ExecutionContexts.sameThreadExecutionContext
+    val p = Promise[ActorRef]()
+    this.ask(Identify(None)) onComplete {
+      case Success(ActorIdentity(_, Some(ref))) ? p.success(ref)
+      case _                                    ? p.failure(ActorNotFound(this))
+    }
+    p.future
+  }
+
+usingAkkaVersionHelper
+monitor {
+	   actorReceiveMonitor = 3000
+	   mailBoxMonitor = 3000
+	
+	
+	}
+	
+	
+
+
+def moveOldAccs(oldLocalUid: String, localUid: String, movingSnsAccsWithTime: List[(String,Long)], removeSnsAccsWithTime: List[(String,Long)]) = {
+           recordsHistoryAc ! AccBindHistoryMsg(movingSnsAccsWithTime.toMap.keys, BindHistoryType.AccMoveAndBind, oldLocalUid, localUid, isFirstBindUser(otherUserId)) //绑定类型（历史）跟已经定义的绑定类型考虑统一
+           recordsHistoryAc ! AccBindHistoryMsg(removeSnsAccsWithTime.toMap.keys, BindHistoryType.AccMoveAndDel, oldLocalUid, null, isFirstBindUser(otherUserId))
+           snsAccountDaoV2.linkSnsAccsWithJoinTime(localUid, movingSnsAccsWithTime)
+           snsAccountDaoV2.unlinkSnsAccByLocalId(oldLocalUid)
+           localUserDaoV2.delLocalUserById(oldLocalUid)
+           localPrivateInfoDaoV2.delPrivateInfoById(oldLocalUid)
+        
+      }
+
+
+ val movingSnsAccsWithTime = oldAccs.filterNot { case (id, _) => allBindSnsTypes(localUid).contains(OtherUserId.getSnsType(id)) }
+          
+
+
+
+
+
+
+package com.joyrec.notebook2.actor
+
+import com.alibaba.fastjson.JSON
+import com.joyrec.common.sns.entity.Token
+import com.joyrec.notebook2.action.ParkProxy
+import com.joyrec.notebook2.common.Ac
+import com.joyrec.notebook2.common.AcMsg
+import com.joyrec.notebook2.common.Cons.AccBindType.AccMove
+import com.joyrec.notebook2.common.Cons.AccBindType.AddNewAcc
+import com.joyrec.notebook2.common.Cons.AccBindType.Login
+import com.joyrec.notebook2.common.Cons.AccBindType.Regist
+import com.joyrec.notebook2.common.Cons.AccountBindLevel
+import com.joyrec.notebook2.common.Cons.AccountBindLevel.DaemonAutoBind
+import com.joyrec.notebook2.common.Cons.AccountBindLevel.ManualBind
+import com.joyrec.notebook2.common.Cons.ApiReturnResult
+import com.joyrec.notebook2.common.Cons.BindHistoryType
+import com.joyrec.notebook2.common.ErrorCode
+import com.joyrec.notebook2.common.Id.LocalUserId
+import com.joyrec.notebook2.common.Id.OtherUserId
+import com.joyrec.notebook2.common.MsgData
+import com.joyrec.notebook2.common.ResJson
+import com.joyrec.notebook2.common.WrapMsg
+import com.joyrec.notebook2.dao.AccountBindHistoryDao
+import com.joyrec.notebook2.dao.GlobalVarDao
+import com.joyrec.notebook2.dao.LocalPrivateInfoDaoV2
+import com.joyrec.notebook2.dao.LocalProtectedInfoDaoV2
+import com.joyrec.notebook2.dao.LocalUserDaoV2
+import com.joyrec.notebook2.dao.OtherUserDaoV2
+import com.joyrec.notebook2.dao.OtherUserInfoHistoryDao
+import com.joyrec.notebook2.dao.ReadParDao
+import com.joyrec.notebook2.dao.SnsAccountDao
+import com.joyrec.notebook2.dao.SnsAccountDaoV2
+import com.joyrec.notebook2.dao.UserSessionDaoV2
+import com.joyrec.notebook2.entity.BaseUserInfo
+
+import akka.actor.ActorRef
+import akka.actor.actorRef2Scala
+import ws.very.util.lang.ImplicitCookies
+
+case class NewOrUpdateSessionMsg(proxyMsg: ProxyJsonMsg, bindResult: Map[String, Any], localUid: String, firstBindAcc: Boolean, mobileId: String, version: String, lang: String, platform: String, reInit: Boolean, bindType: Int, bindLevel: Int)
+case class ValidTokenRs(msg: AcMsg, errorType: String, result: Either[Map[String, Any], String]) extends WrapMsg
+case class AccountBindMsg(msg: AcMsg, localUid: Option[String], bindSnsType: String, snsUid: String, token: Token, bindLevel: Int) extends WrapMsg
+case class PathableInfoQueryMsg(msg: AcMsg, sourceType: Int, path: MsgData.Typ, localId: Option[String], otherParams: Map[String, String]) extends WrapMsg
+case class WrapUserInfoOnLineRs(msg: AcMsg) extends WrapMsg
+
+trait AccountBindAc extends Ac with ImplicitCookies {
+  protected val parkProxy: ParkProxy
+  private val ifExistsPark = parkProxy.ifExists
+  protected val otherUserDaoV2: OtherUserDaoV2
+  protected val snsFactoryAc: ActorRef
+  protected val sessionDaoV2: UserSessionDaoV2
+  protected val accBindHistoryDaoV2: AccountBindHistoryDao
+  protected val snsAccountDaoV2: SnsAccountDaoV2
+  protected val snsAccountDaoV1: SnsAccountDao
+  protected val recordsHistoryAc: ActorRef
+  protected val localUserDaoV2: LocalUserDaoV2
+  protected val readParDaoV2: ReadParDao
+  protected val infoUpdateAc: ActorRef
+
+  protected val localProtectedInfoDaoV2: LocalProtectedInfoDaoV2
+  protected val localPrivateInfoDaoV2: LocalPrivateInfoDaoV2
+  protected val otherUserInfoHistoryDaoV2: OtherUserInfoHistoryDao
+
+  protected val globalVarDao: GlobalVarDao
+  /**
+   * 多设备登录 A机不在线 收不到消息   1.其它设备登录过 需要重新同步 2其它设备登录了 你需要下线
+   * 合入 sessionId 语言 平台 版本 mobileId等信息到session表
+   * T人
+   * 标明parking
+   */
+  /**
+   * 关于重新初始化和踢人的逻辑(区分手动登录和自动重连)
+   * 1. ReInit：本站用户A上一次登录的设备和现在的设备id不同，则标记需要初始化(重新初始化是对本站用户而言，新用户前端强制去发送更新这个人的指令)
+   * 2. 绑定现在分为两种：手动登录，自动重连
+   *    自动重连用户只能通过登录的case分支，其他分支屏蔽。假如选择登录的帐号在线的话返回前端code
+   */
+
+  def receive = {
+    case msg @ AccountBindMsg(ProxyJsonMsg(sessionId, inHost, head), localId, snsType, snsUid, token, bindLevel) =>
+      if (ifExistsPark.isLinkMoblileIdOnPark(sessionId, inHost))
+        snsFactoryAc ! LetCheckToken(msg, snsType, OtherUserId(snsType, snsUid))
+      else
+        ifExistsPark.pushJsonObjMap(sessionId, inHost)(ResJson(Map("b" -> JSON.toJSON(Array("s")), "s" -> "missRequireParams"), error = ResJson.errorField(ErrorCode.InvaildParams, s"miss require params mobileId")))
+
+    case ValidTokenRs(LetCheckToken(bindCMD @ AccountBindMsg(proxyMsg @ ProxyJsonMsg(sessionId, inHost, head), localId, snsType, snsUid, token, bindLevel), _, otherId), ApiReturnResult.InvalidToken, Left(error)) => //Token无效 过期 自动 解绑
+      ifExistsPark.pushJsonObjMap(sessionId, inHost)(ResJson(head, error = error + ("otherId" -> otherId, "tokenId" -> otherId)))
+      log.debug("valid token takes " + (System.currentTimeMillis() - bindCMD.createTime))
+
+    case ValidTokenRs(LetGetUserInfoOnLine(bindCMD @ AccountBindMsg(proxyMsg @ ProxyJsonMsg(sessionId, inHost, head), localId, snsType, snsUid, token, bindLevel), facType, otherUid, tokenId, _), apiReturnResult, Left(error)) => //Token无效 过期 自动 解绑
+      ifExistsPark.pushJsonObjMap(sessionId, inHost)(ResJson(head, error = error + ("otherId" -> otherUid, "tokenId" -> tokenId)))
+      log.debug("valid token takes " + (System.currentTimeMillis() - bindCMD.createTime))
+
+    case ValidTokenRs(LetCheckToken(bindCMD @ AccountBindMsg(proxyMsg @ ProxyJsonMsg(sessionId, inHost, head), localId, snsType, snsUid, token, bindLevel), _, otherUserId), _, _) =>
+      otherUserDaoV2.updateToken(otherUserId, (token.pair1, Option(token.pair2), Option(token.pair3)), snsType)
+      otherUserDaoV2.getUserInfoById(otherUserId) match {
+        case Some(baseInfo) => context.parent ! UserInfoOnLineRs(bindCMD, otherUserId, Right(baseInfo))
+        case None => snsFactoryAc ! LetGetUserInfoOnLine(bindCMD, OtherUserId.getSnsType(otherUserId), otherUserId, otherUserId, token)
+      }
+
+    case UserInfoOnLineRs(bindCMD @ AccountBindMsg(proxyMsg @ ProxyJsonMsg(sessionId, inHost, head), localId, snsType, snsUid, token, bindLevel), otherUid, Right(baseInfo)) =>
+      def toUserInfoJson(otherId: String, userInfo: BaseUserInfo) = {
+        Map(
+          "id" -> otherId,
+          "n" -> userInfo.name,
+          "g" -> userInfo.gender.getOrElse(None),
+          "l" -> userInfo.location,
+          "b" -> userInfo.desc.getOrElse(""),
+          "h" -> userInfo.headRef)
+      }
+
+      //方法作用：注册时新建session，登陆时更新session，多设备登陆同一账号踢掉，关联账号搬迁时老本地账户session踢掉
+      def sendLoginedCmd(otherUid: String, localUid: String, bindType: Int, oldLocalUid: Option[String], isFirstBind: Boolean, proxyMsg: ProxyJsonMsg, bindLevel: Int = AccountBindLevel.ManualBind) = {
+        //case CheckMutiMobileLoginMsg(proxyMsg @ ProxyJsonMsg(sessionId, inHost, msg), bindResult, localUid, firstBindAcc: Option[String], oldLocalId, bindType: Int) =>
+        //检查多设备登录逻辑逻辑
+        def disableMultiOnline(localUid: Option[String], bindType: Int, bindLevel: Int, proxyMsg: ProxyJsonMsg) = {
+          localUid.map { localId => //
+            sessionDaoV2.sessionDetailByLocalId(localId).map {
+              case (sessionId, mobileId, inHost) =>
+                if (ifExistsPark.isOnLine(sessionId, inHost))//FIXME: 这里有两次网络请求要优化成一次，把isOnline的判断扔到远程机器上去做的
+                  bindLevel match {
+                    case ManualBind =>
+                      ifExistsPark.disableWithMultiClientLogin(sessionId, inHost)
+                    case DaemonAutoBind =>
+                      ifExistsPark.disableWithMultiClientLogin(sessionId, inHost)
+                    // ifExistsPark.pushJsonObjMap(sessionId, inHost) {ResJson(Map("b" -> JSON.toJSON(Array("s")), "s" -> "accountIsLogged"), error = ResJson.errorField(ErrorCode.AccountIsLogged, "该账号已经在别的设备登录")) }
+                  }
+                removeDBSessionFn(localId, bindType)
+            }
+          }
+        }
+
+        def removeDBSessionFn(localId: String, bindType: Int) = {
+          if (bindType == AccMove)
+            sessionDaoV2.deleteById(localId)
+        }
+
+        def sendNewOrUpdateSessionFn(otherUid: String, bindType: Int, bindLevel: Int, localUid: String, isFirstBind: Boolean, proxyMsg: ProxyJsonMsg) = {
+          val ProxyJsonMsg(sessionId, inHost, _) = proxyMsg
+          val MemoryParkMsg = ifExistsPark(sessionId, inHost) { park => (park.mobileId, park.appVersion, park.language, park.platform) }
+          MemoryParkMsg.map {
+            case (mobileId, appVersion, language, platform) =>
+              val reInit = sessionDaoV2.sessionDetailByLocalId(localUid).map { case (sessionId, mobileid, inHost) => mobileId == mobileid }.getOrElse(false)
+              context.parent ! NewOrUpdateSessionMsg(proxyMsg, Map("l" -> localUid, "b" -> toUserInfoJson(otherUid, baseInfo), "by" -> bindType), localUid, isFirstBind, mobileId, appVersion, language, platform, reInit, bindType, bindLevel)
+          }
+        }
+        disableMultiOnline(oldLocalUid, bindType, bindLevel, proxyMsg)
+
+        sendNewOrUpdateSessionFn(otherUid, bindType, bindLevel, localUid, isFirstBind, proxyMsg)
+      }
+
+      def isFirstBindUser(otherUid: String) = if (accBindHistoryDaoV2.isHasBindHistory(otherUid)) false else true
+      def allBindSnsTypes(localUserId: String) = snsAccountDaoV2.otherAccsByLocalId(localUserId).map(OtherUserId.getSnsType(_))
+      (localId, snsAccountDaoV2.localAccByOtherId(otherUid), bindLevel) match {
+        case (None, None, _) => //只要从来都没登陆过而且账户表里查不到，就是新用户，管他手动自动，招贤纳士，海纳百川
+          val localUid = LocalUserId.uniqueLocalUserId(otherUid, globalVarDao.incLocalUserId)
+          snsAccountDaoV2.linkSnsAcc(localUid, otherUid)
+          snsAccountDaoV2.setMajorSnsAcc(localUid, otherUid)
+          localUserDaoV2.newLocalUser(localUid)
+          recordsHistoryAc ! AccBindHistoryMsg(List(otherUid), BindHistoryType.FirstBind, null, localUid, isFirstBindUser(otherUid))
+          
+          sendLoginedCmd(otherUid, localUid, Regist, None, isFirstBindUser(otherUid), proxyMsg, bindLevel)
+        case (None, Some(sLocalId), _) => //登陆,t人，更新session都得要，自动登时同样会更新session库以及把sLocalId扔到park里，所以多设备必须踢掉
+          sendLoginedCmd(otherUid, sLocalId, Login, Some(sLocalId), isFirstBindUser(otherUid), proxyMsg, bindLevel)
+        case (Some(localUserId), None, _) => //添加账号，无论自动手动，每一位新人都得安全入户
+          if (allBindSnsTypes(localUserId).contains(OtherUserId.getSnsType(otherUid)))//FIXME: 这里应该是前台弹框去做选择（平台相同的冲突问题）
+            ifExistsPark.pushJsonObjMap(sessionId, inHost)(ResJson(head, error = ResJson.errorField(ErrorCode.ExistsSameSns, "存在相同的平台账号用户")))
+          else {
+            snsAccountDaoV2.linkSnsAcc(localUserId, otherUid)
+            recordsHistoryAc ! AccBindHistoryMsg(List(otherUid), BindHistoryType.AddNewAcc, null, localUserId, isFirstBindUser(otherUid))
+            sendLoginedCmd(otherUid, localUserId, AddNewAcc, None, isFirstBindUser(otherUid), proxyMsg, bindLevel)
+          }
+        case (Some(localUid), Some(oldLocalUid), _) if localUid == oldLocalUid => //某本地账户已经登录前提下，来自同一个设备同一条连接同一个park的“属于该本地账户”的otherId的造访，其实不应该发生任何事，而且绝对不要断这条连接
+          sendLoginedCmd(otherUid, localUid, Login, None, isFirstBindUser(otherUid), proxyMsg, bindLevel)
+        case (Some(localUid),Some(oldLocalUid),DaemonAutoBind) => //防黑客攻击 
+          warn("Some ETs knocking at door,kick it,Snoopy!")
+        
+        case (Some(localUid), Some(oldLocalUid), AccountBindLevel.ManualBind) =>
+          //FIXME: 删除相册和个性签名等
+          def combineAlbum(localId: String, sLocalId: String) = {
+            (localProtectedInfoDaoV2.getUserAlbumWithTime(sLocalId), localProtectedInfoDaoV2.getUserAlbumWithTime(localId)) match {
+              case (oldAlbum, _) if (oldAlbum.isEmpty) =>
+              case (oldAlbum, myAlbum) if (myAlbum.isEmpty) =>
+                localProtectedInfoDaoV2.saveAlbums(localId, oldAlbum)
+                recordsHistoryAc ! LocalAlbumHistoryMsg(localId, oldAlbum.map(_._1), Nil)
+              case (oldAlbum, myAlbum) =>
+                localProtectedInfoDaoV2.delAlbums(localId)
+                val curs = (oldAlbum ++ myAlbum).sortBy { case (url, time) => time }.takeRight(10)
+                localProtectedInfoDaoV2.saveAlbums(localId, curs)
+                recordsHistoryAc ! LocalAlbumHistoryMsg(localId, curs.map(_._1), oldAlbum.map(_._1))
+            }
+          }
+          combineAlbum(localUid, oldLocalUid)
+
+          def combineBlackList(localId: String, sLocalId: String) = {
+            val oldBlackList = localPrivateInfoDaoV2.getBlackList(sLocalId)
+            localPrivateInfoDaoV2.saveBlackLists(localId, oldBlackList)
+          }
+          combineBlackList(localUid, oldLocalUid)
+          snsAccountDaoV2.unlinkSnsAccByLocalId(oldLocalUid)
+          localUserDaoV2.delLocalUserById(oldLocalUid)
+          localPrivateInfoDaoV2.delPrivateInfoById(oldLocalUid)
+          
+          
+          def moveOldAccs(localUid: String, oldLocalUid: String) = {
+            val oldAccs = snsAccountDaoV2.otherAccsWithJoinTimeByLocalId(oldLocalUid)
+            val movingSnsAccsWithTime = oldAccs.filterNot { case (id, _) => allBindSnsTypes(localUid).contains(OtherUserId.getSnsType(id)) }
+            recordsHistoryAc ! AccBindHistoryMsg(movingSnsAccsWithTime.toMap.keys, BindHistoryType.AccMoveAndBind, oldLocalUid, localUid, isFirstBindUser(otherUid)) //绑定类型（历史）跟已经定义的绑定类型考虑统一
+            recordsHistoryAc ! AccBindHistoryMsg(oldAccs.diff(movingSnsAccsWithTime).toMap.keys, BindHistoryType.AccMoveAndDel, oldLocalUid, null, isFirstBindUser(otherUid))
+            snsAccountDaoV2.linkSnsAccsWithJoinTime(localUid, movingSnsAccsWithTime)
+          }
+          moveOldAccs(localUid, oldLocalUid)
+
+          sendLoginedCmd(otherUid, localUid, AccMove, Some(oldLocalUid), isFirstBindUser(otherUid), proxyMsg, bindLevel)  //有网络请求容易报错一定要最后最后做
+      }
+      context.parent ! WrapUserInfoOnLineRs(UserInfoOnLineRs(bindCMD, otherUid, Right(baseInfo)))
+      log.debug("bind takes " + (System.currentTimeMillis() - bindCMD.createTime))
+
+    case WrapUserInfoOnLineRs(UserInfoOnLineRs(AccountBindMsg(proxyMsg @ ProxyJsonMsg(sessionId, inHost, head), localId, typ, uid, token, bindLevel), otherUid, Right(userInfo))) =>
+      val ts = System.currentTimeMillis()
+      if (otherUserDaoV2.getUserInfoById(otherUid))
+        infoUpdateAc ! UserInfoOnLineRs(LetGetUserInfoFromDb(proxyMsg, otherUid), otherUid, Right(userInfo))
+      else {
+        otherUserDaoV2.updateOtherUser(otherUid, userInfo)
+        otherUserInfoHistoryDaoV2.saveOtherUserInfoHistory(otherUid, userInfo, ts, "s", 1)
+        readParDaoV2.snsUserInfoHistoryPars_=(List(otherUid), ts)
+        readParDaoV2.updateUserCheckTimeById(otherUid, ts)
+      }
+
+    case NewOrUpdateSessionMsg(proxyMsg @ ProxyJsonMsg(sessionId, inHost, head), bindResult, localUid, firstBindAcc, mobileId, version, lang, platform, reInit, bindType, bindLevel) => //更新session相关的一些信息  //这不可不可以做异步
+      //只有登录或者第一次绑定的时候才执行session update操作
+      if ((bindType == Regist && bindLevel == ManualBind) || bindType == Login )
+        sessionDaoV2.newOrUpdateSession(localUid, sessionId, mobileId, inHost, version, lang, platform)
+
+      ifExistsPark(sessionId, inHost) { park =>
+        park.localUid_=(localUid)
+        park.pushJsonObjMap(ResJson.success(head, result = bindResult + ("reInit" -> (if (reInit) 1 else 0))))
+      }
+  }
+}

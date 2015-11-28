@@ -1,0 +1,105 @@
+{% extends "_layout.html"%}
+
+{% block subtitle %}修改密码{% endblock %}
+
+{% set bodyCls='mx-orderlist-body-bg' %}
+
+{% set my='active' %}
+
+{% block leftTopContent %}
+<a href="javascript:self.history.go(-1)">
+    <i class="am-header-icon am-icon-mail-reply"></i>
+</a>
+{%endblock%}
+
+{% block content %}
+<div ng-controller="user">
+    <div class="mx-my-title">
+        <div class="am-u-sm-12 mx-my-title" style="height: 130px;">
+            <div class="my-avatar" style="background-image: url([[userinfo.avatar_url]]);">
+                <input style="opacity: 0" accept="image/*" id="avatar_input" type="file" onchange="avatarUpload()"
+                       class="am-circle my-avatar"/>
+            </div>
+
+
+            <div ng-bind="userinfo.screen_name"
+                 style=" height: 30px;margin-top: 10px" ng-bing="userinfo.screen_name"
+                 ng-click="edit('screen_name',userinfo.screen_name,'昵称')"></div>
+        </div>
+    </div>
+
+
+    <div class="am-container">
+        <div class="full-panel">
+            <div class="full-panel-row">
+                原始密码 : <input type="password" ng-model="psw.old_password" class="full-panel-input" placeholder="原始的密码"/>
+            </div>
+            <div class="full-panel-row">
+                新的密码 : <input type="password" ng-model="psw.new_password" class="full-panel-input"
+                              placeholder="6-20的数字和字母组合新的密码"/>
+            </div>
+            <div class="full-panel-row">
+                验证密码 : <input type="password" ng-model="psw.renew_password" class="full-panel-input"
+                              placeholder="再次输入新的密码"/>
+            </div>
+        </div>
+
+        <input type="submit" ng-click="submit()" class="am-btn btn-action am-btn-block" value="修改" onclick=""/>
+
+
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="assets/js/angular.min.js"></script>
+<script>
+    var mxApp = angular.module("mxApp", []).config(['$interpolateProvider',
+        function ($interpolateProvider) {
+            $interpolateProvider.startSymbol('[[');
+            $interpolateProvider.endSymbol(']]');
+        }
+    ]);
+    var mxApp = angular.module("mxApp", []).config(['$interpolateProvider',
+        function ($interpolateProvider) {
+            $interpolateProvider.startSymbol('[[');
+            $interpolateProvider.endSymbol(']]');
+        }
+    ]);
+    mxApp.controller("user", function ($scope, $http) {
+        $scope.userinfo = JSON.parse($.cookie("userinfo"));
+        $scope.psw = {};
+        $scope.psw.old_password = ""
+        $scope.psw.new_password = "";
+        $scope.psw.renew_password = "";
+        $scope.submit = function () {
+            if ($scope.psw.old_password == "") {
+                alert("旧密码不能为空");
+                return;
+            }
+            if ($scope.psw.new_password == "") {
+                alert("新密码不能为空");
+                return;
+            }
+            if ($scope.psw.new_password.length < 6) {
+                alert("密码长度6-20的数字或字母")
+                return;
+            }
+            if ($scope.psw.new_password != $scope.psw.renew_password) {
+                alert("新密码两次输入不相符");
+                return;
+            }
+            $http.post("editPswSubmit", $scope.psw).success(function (json) {
+                if (json.code == 0) {
+                    alert("修改成功");
+                } else {
+                    alert(json.msg);
+                }
+            }).error(function () {
+                alert("修改失败")
+            })
+        }
+    })
+
+</script>
+{% endblock %}

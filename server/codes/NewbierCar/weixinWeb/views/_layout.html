@@ -1,0 +1,108 @@
+{% set pagetitle = "" %}
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>{{ pagetitle }} - {% block subtitle %}{% endblock %}</title>
+
+    <!-- Set render engine for 360 browser -->
+    <meta name="renderer" content="webkit">
+
+    <!-- No Baidu Siteapp-->
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+
+    <link rel="icon" type="image/png" href="assets/i/favicon.png">
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" sizes="192x192" href="assets/i/app-icon72x72@2x.png">
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Amaze UI"/>
+    <link rel="apple-touch-icon-precomposed" href="assets/i/app-icon72x72@2x.png">
+
+    <!-- Tile icon for Win8 (144x144 + tile color) -->
+    <meta name="msapplication-TileImage" content="assets/i/app-icon72x72@2x.png">
+    <meta name="msapplication-TileColor" content="#0e90d2">
+
+    <link rel="stylesheet" href="assets/css/amazeui.min.css">
+    <link rel="stylesheet" href="assets/css/app.css">
+    <link rel="stylesheet" href="assets/css/mixian.css">
+
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/jquery.cookie.js"></script>
+    <script src="assets/js/amazeui.min.js"></script>
+
+    <script src="assets/js/fun.js"></script>
+</head>
+{% if not hiddenHeader %}
+<header data-am-widget="header" class="am-header am-header-default mx-title">
+    <div class="am-header-left am-header-nav">
+
+        {% block leftTopContent %}{% endblock %}
+
+    </div>
+    <h1 class="am-header-title">
+        <a href="#title-link" class="">{% block subtitle %}{% endblock %}</a>
+    </h1>
+
+    <div class="am-header-right am-header-nav">
+        <a href="tel:+8618607319520" class="">
+            <i class="am-header-icon am-icon-phone"></i>
+        </a>
+    </div>
+</header>
+{% endif %}
+
+<body ng-app="mxApp" class="{{bodyCls}}">
+
+{% block content %}{% endblock %}
+
+{% if not hiddenFooter %}
+
+<div data-am-widget="navbar" class="fixTop am-navbar am-cf am-navbar-default mx-foot mx-foot-yuanjiao mx-foot-sh" id="">
+
+    <ul class="am-navbar-nav am-cf am-avg-sm-4 mx-foot-yuanjiao mx-foot-height">
+        <li class="mx-foot-left {{order}}">
+            <a href="orderList">
+            <i class="am-icon-list-alt .am-icon-lg"></i>
+                <span class="am-navbar-label">订单</span>
+            </a>
+
+        </li>
+
+        <li class="mx-foot-right {{my}}">
+            <a href="userInfo">
+            <i class="am-icon-user mx-user"></i>
+                <span class="am-navbar-label">我的</span>
+            </a>
+        </li>
+    </ul>
+
+    <a href="query"><img class="mx-my-img " src="assets/i/car.png"></a>
+
+</div>
+{% endif %}
+</body>
+</html>
+<script>
+    $(function () {
+        fixTop();
+    })
+    function fixTop(it) {
+        $(".fixTop").each(function () {
+            //$(this).css({"top": window.screen.height - $(this).height() + "px", "bottom": "inherit"});
+            $(this).css({"top": $(this).offset().top + "px"})
+        })
+    }
+</script>
+{% block scripts %}
+
+{% endblock %}

@@ -1,0 +1,229 @@
+{% extends "_layout.html"%}
+
+{% block subtitle %}
+订单详情
+{% endblock %}
+
+{% set bodyCls='mx-orderlist-body-bg' %}
+{%set hiddenFooter=true %}
+{% set order='active' %}
+
+{% block content %}
+
+<div ng-controller="order" class="ng-cloak" ng-cloak>
+<div class="mx-order">
+    <div class="am-g am-g-fixed">
+        <div class="am-u-sm-3 mx-order-u-sm-3">用车城市</div>
+        <div class="am-u-sm-9">曼谷</div>
+    </div>
+
+    <div class="am-g am-g-fixed">
+        <div class="am-u-sm-3 mx-order-u-sm-3">出发地</div>
+        <div class="am-u-sm-9">苏玩那机场</div>
+    </div>
+
+    <div class="am-g am-g-fixed">
+        <div class="am-u-sm-3 mx-order-u-sm-3">目的地</div>
+        <div class="am-u-sm-9">曼谷国际机场</div>
+    </div>
+
+    <div class="am-g am-g-fixed">
+        <div class="am-u-sm-3 mx-order-u-sm-3">用车时间</div>
+        <div class="am-u-sm-9">2015-01-01(曼谷时间)</div>
+    </div>
+
+    <div class="am-g am-g-fixed">
+        <div class="am-u-sm-3 mx-order-u-sm-3">车型</div>
+        <div class="am-u-sm-9">商务5座(乘客3行李3)</div>
+    </div>
+</div>
+
+    <div class="mx-orderlist-tishi" ng-show="order.pay_status==0">
+        <span>请在<span ng-bind="order.over_time | mydate"></span>之前付款</span>
+</div>
+
+<div class="am-g am-g-fixed mx-mingxi">
+    <div class="am-u-sm-10 mx-ordercontent-sm-10"><b>订单信息</b></div>
+    <div class="am-u-sm-2"></div>
+</div>
+<div class="am-g am-g-fixed">
+    <div class="am-u-sm-4 mx-order-fuwu-3 mx-ordercontent-sm-3">下单时间</div>
+    <div class="am-u-sm-8 mx-order-fuwu-9 mx-ordercontent-sm-9" ng-bind="order.build_time"></div>
+</div>
+<div class="am-g am-g-fixed">
+    <div class="am-u-sm-4 mx-order-fuwu-3 mx-ordercontent-sm-3">订单号</div>
+    <div class="am-u-sm-8 mx-order-fuwu-9 mx-ordercontent-sm-9" ng-bind="order.order_no">123456789</div>
+</div>
+<div class="am-g am-g-fixed">
+    <div class="am-u-sm-4 mx-order-fuwu-3 mx-ordercontent-sm-3">用车金额</div>
+    <div class="am-u-sm-8 mx-order-fuwu-9 mx-ordercontent-sm-9"><span class="mx-ordercontent-sm-9-span"><i
+            class="am-icon-cny"></i><span ng-bind="order.car_total_price"></span></span>
+        <!--&nbsp;&nbsp;<span class="mx-ordercontent-sm-9-span-2">资费详情</span>-->
+    </div>
+</div>
+<div class="am-g am-g-fixed mx-ordercontent-fixed">
+    <div class="am-u-sm-4 mx-order-fuwu-3 mx-ordercontent-sm-3">预付定金</div>
+    <div class="am-u-sm-8 mx-order-fuwu-9 mx-ordercontent-sm-9"><span class="mx-ordercontent-sm-9-span"><i
+            class="am-icon-cny"></i><span ng-bind="order.car_total_price"></span></span></div>
+</div>
+
+
+<div class="am-g am-g-fixed mx-mingxi">
+    <div class="am-u-sm-10 mx-ordercontent-sm-10"><b>乘客信息</b></div>
+    <div class="am-u-sm-2"></div>
+</div>
+<div class="am-g am-g-fixed">
+    <div class="am-u-sm-4 mx-order-fuwu-3 mx-ordercontent-sm-3">订车电话</div>
+    <div class="am-u-sm-8 mx-order-fuwu-9 mx-ordercontent-sm-9" ng-bind="order.order_phone"></div>
+</div>
+<div class="am-g am-g-fixed">
+    <div class="am-u-sm-4 mx-order-fuwu-3 mx-ordercontent-sm-3">邮箱</div>
+    <div class="am-u-sm-8 mx-order-fuwu-9 mx-ordercontent-sm-9" ng-bind="order.order_email"></div>
+</div>
+<div class="am-g am-g-fixed">
+    <div class="am-u-sm-4 mx-order-fuwu-3 mx-ordercontent-sm-3">境外联系电话</div>
+    <div class="am-u-sm-8 mx-order-fuwu-9 mx-ordercontent-sm-9">
+        <input ng-show="order.pay_status!=-1" class="mx-ordercontent-phone" type="text" placeholder="境外联系电话"
+               ng-model="order.service_tel_abroad"/>
+        <span ng-show="order.pay_status==-1" ng-bind="order.service_tel_abroad">
+
+        </span>
+    </div>
+</div>
+
+    <div ng-show="order.service_type==0" class="am-g am-g-fixed mx-ordercontent-fixed">
+        <div class="am-u-sm-4 mx-order-fuwu-3 mx-ordercontent-sm-3">接机牌姓名</div>
+        <div class="am-u-sm-8 mx-order-fuwu-9 mx-ordercontent-sm-9" ng-bind="order.pickup_card_nam"></div>
+</div>
+    <div ng-show="order.pay_status!=-1">
+        <div class="am-g am-g-fixed mx-mingxi">
+            <div class="am-u-sm-10 mx-ordercontent-sm-10"><b>服务明细</b></div>
+            <div class="am-u-sm-2"></div>
+    </div>
+        <div class="am-u-sm-12 mx-order-fuwu-3 mx-ordercontent-sm-3" ng-show="order.service_type==0">
+            1.付款成功后, 将会收到乘车凭证的邮件, 请打印后, 在乘车时向司机出示。
+            <br/>
+            2.距您约定用车时间4个法定工作日以前取消订单, 订单费用全额退还; 否则将扣除您支付的金额。
+        </div>
+        <div class="am-u-sm-12 mx-order-fuwu-3 mx-ordercontent-sm-3" ng-show="order.service_type==1">
+            距您约定用车时间4个法定工作日以前取消订单, 订单费用全额退还; 否则将扣除您支付的金额。
+        </div>
+</div>
+    <!--<div class="am-g am-g-fixed mx-ordercontent-fixed">-->
+    <!--<div class="am-u-sm-12 mx-order-fuwu-3 mx-ordercontent-sm-3">-->
+    <!--服务明细服务明细服务明细服务明细服务明细服务明细服务明细服务明细服务明细服务明细服务明细服务明细服务明细服务明细服务明细服务明细服务明细-->
+    <!--</div>-->
+    <!--</div>-->
+
+    <div class="am-g am-g-fixed mx-ordercontent-fuwuphone" ng-show="order.pay_status!=-1">
+    <div class="am-u-sm-6"><img width="30%" src="assets/i/phone.png">
+
+        <div>联系服务商(中国)</div>
+    </div>
+    <div class="am-u-sm-6"><img width="30%" src="assets/i/phone.png">
+
+        <div>联系服务商(曼谷)</div>
+    </div>
+        <div class="am-u-sm-12 mx-ordercontent-sm-12" ng-show="order.pay_status==0">
+            <button ng-click="cancelOrder(order.order_no)" type="button" id="doc-confirm-toggle"
+                    class="am-btn am-btn-warning am-radius mx-ordercontent-button">
+            取消订单
+        </button>
+    </div>
+</div>
+
+    <hr class="hr"/>
+
+    <div ng-show="order.pay_status==0" data-am-widget="navbar" class="am-navbar am-cf am-navbar-default mx-order-foot"
+         id="">
+    <ul class="am-navbar-nav am-cf am-avg-sm-4">
+
+        <li style="background: rgba(220,85,100,100);">
+
+            <form action="payment" method="post" id="pay">
+                <span class="am-navbar-label" style="font-size:14px;" onclick="document.getElementById('pay').submit()">提交订单</span>
+            </form>
+
+
+        </li>
+    </ul>
+</div>
+</div>
+
+<div class="am-modal " tabindex="-1" id="doc-modal-1">
+    <div class="am-modal-dialog">
+        <div class="am-modal-hd">
+            <span id="doc-modal-title">提示</span>
+            <a href="javascript: void(0)" class="am-close am-close-spin" data-am-modal-close>&times;</a>
+        </div>
+        <div class="am-modal-bd">
+            确认退出吗?
+        </div>
+
+        <div class="am-modal-footer">
+            <span class="am-modal-btn" data-am-modal-cancel>取消</span>
+            <span class="am-modal-btn" data-am-modal-confirm>确定</span>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="assets/js/angular.min.js"></script>
+<script type="text/javascript">
+
+
+    var mxApp = angular.module("mxApp", []).config(['$interpolateProvider',
+        function ($interpolateProvider) {
+            $interpolateProvider.startSymbol('[[');
+            $interpolateProvider.endSymbol(']]');
+        }
+    ]);
+    mxApp.filter("serviceType", function () {
+        return function (item) {
+            if (item == undefined || item == "") {
+                return "";
+            }
+            if (item == '0') {
+                return "接机"
+            } else {
+                return "送机"
+            }
+        };
+    });
+    mxApp.filter("mydate", function () {
+        return function (item) {
+            if (item == undefined || item == "") {
+                return "";
+            }
+            var d = new Date(item);
+            return d.Format("yyyy年MM月dd日 hh:mm")
+        };
+    });
+    mxApp.controller("order", function ($scope, $http) {
+        var orderj = $.cookie("temOrder");
+        if (orderj == undefined) {
+            self.location.href = "orderList";
+            return;
+        }
+        $scope.order = JSON.parse($.cookie("temOrder"));
+        $scope.order.pay_status = '{{pay_status}}';
+        $scope.order.service_tel_abroad = '{{service_tel_abroad}}';
+        if ($scope.order.service_tel_abroad == -1) {
+            $scope.order.service_tel_abroad = "";
+        }
+        $scope.cancelOrder = function () {
+            $("#doc-modal-1").modal({
+                onConfirm: function (e) {
+                    $.get("orderCancel?order_no=" + $scope.order.order_no, function (json) {
+                        alert(json)
+                    })
+                }
+            })
+
+        }
+    })
+</script>
+
+{% endblock %}

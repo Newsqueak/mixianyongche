@@ -1,0 +1,34 @@
+CoC原则，零配置，零注解
+play的不在代码中配置不像nodejs的config，而是高内聚的路径配置路由表restful风格的最短路径匹配，记住高内聚
+webservice 的正反两向，极简的对外接口也就是webservice服务层，还有极度概括封装的WS调用，调用外部接口，类似play的WS类的封装
+spring jfinal jdon bootstrap html5的js框架，react.js
+废掉tomcat，做成微服务微架构，xnio
+兼容现有servlet代码，可以使用这些旧代码， 统一数据源
+从koala架构出发
+
+
+那么就要有如下逻辑：
+
+    1 对于M：首先检查classpath里是否有url中寻找的实体（比如blog，我们不能说那是资源，资源是映射），这个实体就是Developer创建 的，如果没有，则去数据库中查找名为blog的表，创建Blog类（并不在文件系统中生成这个class）。如果也没有，则返回not found。
+
+    2 对于C：首先根据Router中的默认定义，寻找BlogController，检查是否存在于classpath中，没有则用 ControllerGenerator生成BlogController（与EntityGenerator相同，不过既然我的Generator可以 指定父类，实际上用一个ClassGenerator就应该OK了）。
+
+    3 对于V：现在默认路径下寻找页面（jsp或者html），如果没有，则创建Blog页面流（Stream）返回给客户端。
+
+    4 对于Router：默认就是/blog对应BlogController。当然你可以建立自己的Router文件，来修改映射关系。
+
+
+我们回到M讨论。我这个M既要承担ORM的责任又要承担DVM（Domain View Mapping）的职责。也就是说，我期望我的对象里面可以关联其他对象，同时我也希望我在UI上显示正确的中文名，而不是字段名。
+
+    先说ORM，关联关系（继承就先别指望自动生成了），我可以根据数据库表的主外键关系生成，然后用ASM动态加上注解（还是基于Hibernate）。 我现在唯一不确定的是，用ASM生成的属性，类型可以是另外的类吗？答案是可以，跟内置的Java类型是一样一样的。
+
+    然后是我要让生成HTML或者XML能正确显示字段的Label，这个可以提取表的注释，然后利用ASM动态加上注解。
+
+ 
+JDiy
+
+快，自动化，自动化生成代码  
+
+
+
+供应商分销商构筑商业生态圈，只有供应链不断商业系统才稳定，快艇模型的企业技术架构是正确的

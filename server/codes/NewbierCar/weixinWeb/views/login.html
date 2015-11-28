@@ -1,0 +1,84 @@
+{% extends "_layout.html"%}
+
+{% block subtitle %}登录{% endblock %}
+
+{% set bodyCls='mx-orderlist-body-bg' %}
+{% set hiddenHeader=true %}
+{% set my="active" %}
+
+{% block content %}
+
+<div class="register">
+	<div class="am-g am-g-fixed">
+		<div class="am-u-sm-6 mx-login-sm-6">
+			<a href="register">
+				<img src="assets/i/register.png" width=45%;>
+			</a>
+
+		</div>
+		<div class="am-u-sm-6 ">
+
+			<img class="mx-icon-chevron-right" src="assets/i/c.png" width=20%;>
+
+		</div>
+		<div class="am-u-sm-12 mx-login-sm-12">
+			<img src="assets/i/login.png" width=25%;>
+		</div>
+	</div>
+
+	<form action="" class="am-form am-form-inline mx-login-form" style="margin-top:40px;">
+		<div class="am-form-group am-form-icon login-input1">
+			<i class="am-icon-mobile-phone login-input-icon"></i>
+			<input type="tel" id="tel" class="am-form-field am-radius" placeholder="请输入手机号" value="15810833699">
+		</div>
+
+		<div class="am-form-group am-form-icon login-input2">
+			<i class="am-icon-unlock-alt login-input-icon"></i>
+			<input type="text" id="psw" class="am-form-field am-radius" placeholder="6-20数字或字母" value="123123">
+	  </div>
+
+		<button type="button" class="am-btn am-btn-block btn-action btn-action-yellow" onclick="loginSubmit()">登陆
+		</button>
+	</form>
+
+	<div class="am-g am-g-fixed">
+	  <div class="am-u-sm-12 mx-login-repwd">
+		  <a href="losePsw">
+			  忘记密码？
+		  </a>
+
+	  </div>
+	</div>
+
+
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+	function loginSubmit() {
+		$.post("login", {
+			phone: $("#tel").val(),
+			password: $("#psw").val(),
+			country_code: "86"
+		}).success(function (json) {
+			if (json.code == 0) {
+				delete json.code;
+				var userinfo = json;
+				$.cookie("userinfo", JSON.stringify(userinfo), {maxAge: 5 * 365 * 24 * 60 * 60});
+				self.location.href = "userInfo"
+
+			} else {
+				$.cookie("userinfo", "", {maxAge: -1});
+				alert(json.msg)
+
+			}
+		}).error(function (e) {
+			alert(e);
+		})
+	}
+
+</script>
+{% endblock %}

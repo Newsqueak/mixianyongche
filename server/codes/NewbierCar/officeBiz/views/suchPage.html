@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>haha</title>
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <script>
+        function testEncoding() {
+            $.post("/testEncoding", {phone: encodeURIComponent("+12568+-451264#&1214+55")}, function (data, status) {
+                alert(data);
+                $("#rst").html(data);
+            }, "text");
+        }
+
+    </script>
+</head>
+<body>
+<input type="button" value="测试" onclick="testEncoding();">
+<span id="rst"></span>
+
+</body>
+
+</html>
