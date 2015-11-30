@@ -522,46 +522,110 @@ exports.editPswSubmitPage = function (req, res, next) {
 exports.repsw2Page = function (req, res, next) {
     res.render("psw2");
 };
-exports.lostPsw = function (req, res, next) {
 
-    res.render("lostPsw");
-    if(res.session.lostPsw){
-        res.session.lostPsw=null;
-        delete res.session.lostPsw;
+exports.losePswPage = function (req, res, next) {
+
+
+    if(req.cookies.losePsw){
+        //req.cookies.losePsw=null;
+        res.cookie("losePsw",{},{maxAge: -1,httpOnly:true});
     }
+    return res.render("losePsw");
+
 
 };
 exports.lostPsw_phone = function (req, res, next) {
     //request send sms
+    var data={phone:req.body.phone,country_code:req.body.country_code};
 
-    //写session
-    res.session.lostPswData={
-        timestamp:date.now.getTime(),
-        phone:req.phone,
-    }
-    return res.json({code:0,msg:""});
+    common.RemoteAPI.post(postOptions('/1/user/existence.do', data), function (e, r, result) {
+        if (e) {
+            return res.status(412).end(e)
+        } else {
+
+            var json = JSON.parse(result);
+            if (json.code == 0) {
+                res.cookie("losePsw",data,{httpOnly:true});
+            }
+            return res.json(json);
+        }
+    });
+
+
 };
-exports.lostPsw_smscode = function (req, res, next) {
+exports.lostPsw_sendsms = function (req, res, next) {
 
 
-    if(res.session.lostPswData && res.session.lostPswData.phone){
+    if(!req.cookies.losePsw || !req.cookies.losePsw.phone){
         return res.json({code:11,msg:"请重新开始"})
     }else{
-        var phone = res.session.lostPswData.phone;
-        //verify sms code
-        return res.json({code:0,msg:""})
+
+        var data = req.cookies.losePsw;
+        //接口服务器发送短信
+        common.RemoteAPI.post(postOptions('http://authcode.laobingke.com:9000/1/auth_code/emitting', data, true), function (ee, rr, rresult) {
+
+
+            if (ee) {
+                console.log(ee);
+                return res.status(412).end(ee)
+            } else {
+
+                var smsjson = JSON.parse(rresult);
+                console.log(smsjson);
+                return res.json(smsjson);
+            }
+
+            //var smsJson = {code:1:msg:"短信发送失败"}
+        });
     }
 
+};
+exports.lostPsw_verifysms = function (req, res, next) {
+
+
+    if(!req.cookies.losePsw || !req.cookies.losePsw.phone){
+        return res.json({code:11,msg:"请重新开始"})
+    }else{
+        var data = {
+            phone:req.cookies.losePsw.phone,
+            country_code :req.cookies.losePsw.country_code ,
+            captcha:req.body.captcha
+        };
+        common.RemoteAPI.post(postOptions('http://authcode.laobingke.com:9000/1/auth_code/verifying', data, true), function (ee, rr, rresult) {
+            if (ee) {
+                return res.status(412).end(ee)
+            } else {
+
+                var smsjson = JSON.parse(rresult);
+                console.log(smsjson);
+                return res.json(smsjson)
+
+            }
+        })
+    }
 
 };
 exports.lostPsw_reset = function (req, res, next) {
 
-    if(res.session.lostPswData && res.session.lostPswData.phone){
+    if(!req.cookies.losePsw || !req.cookies.losePsw.phone){
         return res.json({code:11,msg:"请重新开始"})
     }else{
-        var phone = res.session.lostPswData.phone;
+        var data = {
+            phone:req.cookies.losePsw.phone,
+            country_code :req.cookies.losePsw.country_code ,
+            new_password :req.body.new_password
+        };
+        common.RemoteAPI.post(postOptions('/1/user/forget_password.do', data, false), function (ee, rr, rresult) {
+            if (ee) {
+                return res.status(412).end(ee)
+            } else {
 
-        //send phone,psw
+                var smsjson = JSON.parse(rresult);
+                console.log(smsjson);
+                return res.json(smsjson)
+
+            }
+        })
         return res.json({code:0,msg:""})
     }
 };

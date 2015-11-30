@@ -30,8 +30,11 @@ webRouter.get("/editPsw", webAction.editPswPage);
 webRouter.post("/editPswSubmit", webAction.editPswSubmitPage);
 webRouter.get("/usercog", webAction.userCogPage);
 webRouter.get("/logout", webAction.logoutPage);
-webRouter.get("/editPsw", webAction.lostPsw);
-
+webRouter.get("/losePsw", webAction.losePswPage);
+webRouter.post("/lostPsw_phone", webAction.lostPsw_phone);
+webRouter.post("/lostPsw_sendsms", webAction.lostPsw_sendsms);
+webRouter.post("/lostPsw_verifysms", webAction.lostPsw_verifysms);
+webRouter.post("/lostPsw_reset", webAction.lostPsw_reset);
 
 /**
  * Expose routes

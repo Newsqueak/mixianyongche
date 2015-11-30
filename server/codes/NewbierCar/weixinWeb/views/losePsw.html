@@ -1,6 +1,6 @@
 {% extends "_layout.html"%}
 
-{% block subtitle %}重置密码 1/2{% endblock %}
+{% block subtitle %} 找回密码 {% endblock %}
 
 {% set bodyCls='mx-orderlist-body-bg' %}
 
@@ -10,43 +10,185 @@
 {% block content %}
 <style>
 
-    .vercode {
-        overflow: hidden;
-        height: 0;
-        transition: height .3s;
-        -webkit-transition: height .3s;
-    }
 
-    .vercode-show {
-        height: 100px;
-
-    }
 
 </style>
-<div class="am-container">
-    <div class="full-panel">
-        手机号:<input type="number" class="full-panel-input" placeholder="请输入注册时的手机号"/>
+
+<div class="am-container" ng-controller="losePsw">
+
+    <div  id="verphone">
+        <div class="full-panel ">
+            手机号:<input type="number" ng-model="psw.phone" ng-minlength="4" required class="full-panel-input ele" placeholder="请输入注册时的手机号"/>
+        </div>
+
+        <input type="button" class="am-btn btn-action am-btn-block ele" value="验证手机号" ng-click="verifyPhone()"/>
     </div>
 
-    <input type="submit" class="am-btn btn-action am-btn-block" value="验证手机号" onclick="vercodeShow()"/>
-
-    <div class="am-form vercode" style="margin-top: 2rem">
-        <div class="am-u-sm-6">
-            <input type="number" class="am-form-field am-radius" placeholder="输入验证码">
+    <div class="am-form am-g " style="margin-top: 2rem;display:none" id="vercode">
+        <div class="am-u-sm-4">
+            <input type="number" ng-model="psw.captcha" required class="am-form-field am-radius ele" placeholder="输入验证码">
         </div>
-        <div class="am-u-sm-6">
-            <input type="submit" class="am-btn btn-action am-btn-block" value="验证"/>
+        <div class="am-u-sm-5">
+            <button type="button" class="am-btn btn-action am-btn-block ele" id="sendSMSBtn" ng-click="sendSMS()"
+                   ><span id="smsTimeN"></span>发送验证码</button>
+        </div>
+        <div class="am-u-sm-3">
+            <input type="button" class="am-btn btn-action am-btn-block ele"  ng-click="verifySMS()" value="验证"/>
         </div>
     </div>
 
+    <div id="newpsw" style="display: none">
+        <div class="full-panel">
+
+            <div class="full-panel-row">
+                新的密码 : <input type="password" ng-model="psw.new_password" class="full-panel-input"
+                              placeholder="6-20的数字和字母组合新的密码"/>
+            </div>
+            <div class="full-panel-row">
+                验证密码 : <input type="password" ng-model="psw.renew_password" class="full-panel-input"
+                              placeholder="再次输入新的密码"/>
+            </div>
+        </div>
+
+        <input type="button" ng-click="submit()" class="am-btn btn-action am-btn-block" value="修改" onclick=""/>
+    </div>
 </div>
 
 {% endblock %}
 
 {% block scripts %}
+
+<script src="assets/js/angular.min.js"></script>
 <script>
-    function vercodeShow() {
-        $(".vercode").addClass("vercode-show");
-    }
+    var mxApp = angular.module("mxApp", []).config(['$interpolateProvider',
+        function ($interpolateProvider) {
+            $interpolateProvider.startSymbol('[[');
+            $interpolateProvider.endSymbol(']]');
+        }
+    ]);
+
+    mxApp.controller("losePsw", function ($scope, $http) {
+        $scope.psw = {};
+        $scope.psw.phone = "";
+        $scope.psw.country_code = "86";
+        $scope.psw.captcha="";
+        $scope.psw.new_password = "";
+        $scope.psw.renew_password = "";
+
+        $scope.verifyPhone=function(){
+            if ($scope.psw.phone.$invalid) {
+                alert("请正确输入手机号")
+                return;
+            }
+            $http.post("lostPsw_phone",$scope.psw).success(function(res){
+                if(res.code===0 && res.is_existing==1){
+                    $("#verphone").find('.ele').attr("disabled",true);
+                    $("#vercode").css({display:"block"})
+                }else if(res.code===0 && res.is_existing==0){
+                    alert("不存在该手机号");
+                }else{
+                    alert("缺少参数");
+                }
+            })
+        }
+
+        $scope.sendSMS = function () {
+            if ($scope.psw.phone.$invalid) {
+                alert("请正确输入手机号")
+                return;
+            }
+
+            $http.post('lostPsw_sendsms', $scope.psw).success(function (json) {
+                switch (json.code) {
+                    case 0:
+                        //alert("短信已经发送，请稍等");
+                        //$("#sendSMSBtn").attr("disabled", "disabled");
+                        $scope.enabledAgainSMS();
+                        break;
+
+                    default :
+                        alert(json.msg);
+                }
+            }).error(function (err) {
+                alert(err);
+            })
+        }
+
+        $scope.smsTime = "";
+        var smsTimeDom = $("#smsTimeN").get(0);
+        $scope.$watch('smsTime', function(newValue, oldValue) {
+            //if (newValue === oldValue) { return; }
+            if(newValue!=-1 && newValue!==""){
+                smsTimeDom.innerHTML="("+$scope.smsTime+")"
+            }else{
+                smsTimeDom.innerHTML="";
+
+            }
+
+        });
+        $scope.enabledAgainSMS = function () {
+            if($scope.smsTime===""){$scope.smsTime=20};
+            $("#sendSMSBtn").attr("disabled", "disabled");
+            $scope.smsTime--;
+            $scope.$apply()
+            if ($scope.smsTime == -1) {
+                if($("#newpsw").css("display")=="block"){
+                    $("#sendSMSBtn").removeAttr("disabled");
+                }
+
+                $scope.smsTime="";
+            } else {
+                setTimeout(arguments.callee, 1000)
+            }
+
+            //$scope.enabledAgainSMS
+
+        }
+        $scope.verifySMS=function(){
+            if ($scope.psw.captcha.$invalid) {
+                alert("请输入有效短信验证码")
+                return;
+            }
+            $http.post('lostPsw_verifysms', $scope.psw).success(function (json) {
+                switch (json.code) {
+                    case 0:
+                        $("#newpsw").css({display:"block"});
+                        $("#vercode").find('.ele').attr("disabled",true);
+                        break;
+
+                    default :
+                        alert(json.msg);
+                }
+            }).error(function (err) {
+                alert(err);
+            })
+        }
+        $scope.submit = function () {
+
+            if ($scope.psw.new_password === "") {
+                alert("新密码不能为空");
+                return;
+            }
+            if ($scope.psw.new_password.length < 6) {
+                alert("密码长度6-20的数字或字母")
+                return;
+            }
+            if ($scope.psw.new_password != $scope.psw.renew_password) {
+                alert("新密码两次输入不相符");
+                return;
+            }
+            $http.post("lostPsw_reset", $scope.psw).success(function (json) {
+                if (json.code == 0) {
+                    alert("修改成功");
+                    self.location.href = "userinfo";
+                } else {
+                    alert("缺少参数");
+                }
+            }).error(function () {
+                alert("修改失败")
+            })
+        }
+    })
+
 </script>
 {% endblock %}
