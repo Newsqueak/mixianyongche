@@ -2,7 +2,7 @@
  * Module dependencies.
  */
 var htxAction = require('../app/action/htxAction');
-var testEncoding = require("../app/action/testEncoding");
+var smsProxy = require("../app/action/smsProxy");
 
 /**
  * Expose routes
@@ -12,8 +12,8 @@ module.exports = function (app, passport, errorCode) {
 
     // user routes
     app.post("/startSearch", htxAction.search);
-    app.post("/testEncoding", testEncoding.testEncoding);
-    app.get("/suchPage", testEncoding.suchPage);
+    app.post("/sms/deliver", smsProxy.sendSMS);
+    app.get("/sms/sendPage", smsProxy.sendSMSPage);
     /**
      * Error handling
      */

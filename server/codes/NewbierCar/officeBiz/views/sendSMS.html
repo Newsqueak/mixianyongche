@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>发送短信(请用chrome)</title>
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <script>
+        function sendSMS() {
+            $.post("/sms/deliver", {phone: $("#phone").val(), msg: $("#info").val()}, function (data, status) {
+                if (data.code != 0) {
+                    $("#rst").html("发送失败，原因：" + data.msg);
+                    setTimeout(function () {
+                        $("#rst").html("");
+                    }, 5000);
+                } else {
+                    $("#rst").html("发送成功!");
+                    setTimeout(function () {
+                        $("#rst").html("");
+                    }, 5000);
+                }
+            }, "json");
+        }
+
+    </script>
+</head>
+<body>
+<div align="center">
+    <span>电话： </span> <span><input type="text" id="phone"/></span>
+</div>
+<div align="center">
+    <span>发送信息：</span> <span><textarea id="info" rows="10" cols="60"></textarea></span>
+</div>
+<div align="center">
+    <span><input type="button" value="发送" onclick="sendSMS();"></span><span id="rst" style="color:red"></span>
+</div>
+</body>
+
+</html>

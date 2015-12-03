@@ -204,19 +204,27 @@ WeixinPub.prototype.createOauthUrlForCode = function (redirectURL, baseScope) {
 
 WeixinPub.prototype.doWhatByOpenid = function (codeOrAccessToken, callback) {
 	
+	var self = this;
 	if (typeof codeOrAccessToken === "string") {
-		
-		
-		
-		
-		
-		
+	    var queryParts = {
+            appid: self._id,
+            secret: self._secret,
+            code: codeOrAccessToken,
+            grant_type: "authorization_code"
+        };
+
+        request.get(self._apiBaseUrl + "/sns/oauth2/access_token?" + qs.stringify(queryParts), function (e, r, result) {
+			if (e) {
+				callback(e, null);
+			}else {
+				var accessToken = JSON.parse(result);
+                callback(null, accessToken["openid"]);
+			}
+		});
 	} else if(typeof codeOrAccessToken === "object") {
-		
+	    callback(null, codeOrAccessToken["openid"]);
 	}
-	
-	
-	
+
 };
 
 
