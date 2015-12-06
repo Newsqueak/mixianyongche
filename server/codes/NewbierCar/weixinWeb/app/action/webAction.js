@@ -118,7 +118,7 @@ exports.orderFillingPage = function (req, res, next) {
 exports.orderDetailsPage = function (req, res, next) {
 
     if (req.query.order_no != undefined && req.query.order_no != "") {
-        common.RemoteAPI.post(postOptions('/1/order/status.do', {order_no: req.query.order_no}), function (e, r, result) {
+        common.RemoteAPI.post(postOptions('/1/order/details.do', {order_no: req.query.order_no}), function (e, r, result) {
             if (e) {
                 return next(e);
             } else {
@@ -182,8 +182,9 @@ exports.orderCancel = function (req, res, next) {
 //我的订单列表
 exports.orderListPage = function (req, res, next) {
 
-    if (req.cookies.token && req.cookies.token != "" && req.cookies.token != undefined) {
 
+    if (req.cookies.token && req.cookies.token != "" && req.cookies.token != undefined) {
+        console.log('a');
         common.RemoteAPI.post(postOptions('/1/order/list.do', {token: req.cookies.token}), function (e, r, result) {
 
             if (e) {
@@ -191,7 +192,7 @@ exports.orderListPage = function (req, res, next) {
             } else {
                 //console.log(result);
                 var json = JSON.parse(result);
-                console.log(json)
+
                 return res.render("orders", json); //json.code=0 有正确返回 ，json.code==2 无效凭证
             }
 
@@ -199,6 +200,7 @@ exports.orderListPage = function (req, res, next) {
 
 
     } else {
+
         return res.render("orders", {code: 3}); //未登录
     }
 

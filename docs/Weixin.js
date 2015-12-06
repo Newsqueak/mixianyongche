@@ -188,7 +188,6 @@ WeixinPub.prototype.kfAccountSendMsg = function () {
 
 
 /////////////////////////////////////////// 支付所需接口模块 ////////////////////////////////////////////////
-// https://api.weixin.qq.com/cgi-bin/user/info?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN
 WeixinPub.prototype.createOauthUrlForCode = function (redirectURL, baseScope) {
 	var self = this;
 	var queryParts = {
@@ -218,7 +217,11 @@ WeixinPub.prototype.doWhatByOpenid = function (codeOrAccessToken, callback) {
 				callback(e, null);
 			}else {
 				var accessToken = JSON.parse(result);
-                callback(null, accessToken["openid"]);
+                if (accessToken.hasOwnProperty("openid")) {
+	                callback(null, accessToken["openid"]);
+				} else {
+					callback(new Error("no openid"), null);
+				}
 			}
 		});
 	} else if(typeof codeOrAccessToken === "object") {
@@ -227,7 +230,77 @@ WeixinPub.prototype.doWhatByOpenid = function (codeOrAccessToken, callback) {
 
 };
 
+WeixinPub.prototype.doWhatByUserinfo = function (codeOrAccessToken, callback) {
+	
+	var self = this;
+    if (typeof codeOrAccessToken === "string") {
+        var queryParts = {
+            appid: self._id,
+            secret: self._secret,
+            code: codeOrAccessToken,
+            grant_type: "authorization_code"
+        };
 
+        request.get(self._apiBaseUrl + "/sns/oauth2/access_token?" + qs.stringify(queryParts), function (e, r, result) {
+			if (e) {
+				callback(e, null);
+			}else {
+				var accessToken = JSON.parse(result);
+                var options = {
+				    access_token: accessToken["access_token"],
+					openid: accessToken["openid"],
+					lang: "zh_CN"
+				};
+				
+				request.get(self._apiBaseUrl + "/sns/userinfo?" + qs.stringify(options), function (ee, rr, infoString) {
+					if (ee) {
+						callback(ee, null);
+					}else {
+						var userInfo = JSON.parse(infoString);
+						if (userInfo.hasOwnProperty("openid")) {
+							callback(null, userInfo);
+						} else {
+							callback(new Error("no openid"), null);
+						}
+					}
+				});
+			}
+		});
+	
+	} else if(typeof codeOrAccessToken === "object") {
+	    var options = {
+		    access_token: codeOrAccessToken["access_token"],
+			openid: codeOrAccessToken["openid"],
+			lang: "zh_CN"
+		};
+    	request.get(self._apiBaseUrl + "/sns/userinfo?" + qs.stringify(options), function (ee, rr, infoString) {
+			if (ee) {
+				callback(ee, null);
+			}else {
+				var userInfo = JSON.parse(infoString);
+			    if (userInfo.hasOwnProperty("openid")) {
+					callback(null, userInfo);
+				} else {
+					callback(new Error("no openid"), null);
+				}
+			}
+		});
+	}
+	
+};
+
+WeixinPub.prototype.doWhatByInnerUserinfo = function (openid, callback) {
+	var self = this;
+	var coreHandler = function () {
+		
+		
+	};
+	doWhatOnStatus(self, coreHandler, coreHandler);
+    
+    return self;
+};
+
+// https://api.weixin.qq.com/cgi-bin/user/info?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN
 
 
 module.exports = WeixinPub;
@@ -241,20 +314,12 @@ module.exports = WeixinPub;
 群发接口	   详情	已获得	 
 模板消息（业务通知）
 
-获取用户基本信息
+批量获取获取用户基本信息
 获取用户列表
 获取用户地理位置(已开启，每次上报)
 长链接转短链接接口
 客服管理
 会话控制
-
-网页授权获取用户基本信息
-
-
-
-
-
-
 
 
 var https = require('https');
