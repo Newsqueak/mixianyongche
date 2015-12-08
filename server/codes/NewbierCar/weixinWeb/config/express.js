@@ -17,6 +17,7 @@ var flash = require('connect-flash');
 var winston = require('winston');
 var helpers = require('view-helpers');
 var config = require('./config');
+var weixinable = require('./middlewares/weixinable');
 var pkg = require('../package.json');
 
 var env = process.env.NODE_ENV || 'development';
@@ -107,6 +108,7 @@ module.exports = function (app, passport) {
     // should be declared after session and flash
     app.use(helpers(pkg.name));
 
+    app.use(weixinable());
     // adds CSRF support
     //if (process.env.NODE_ENV !== 'test') {
     //    app.use(csrf());

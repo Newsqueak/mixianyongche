@@ -4,6 +4,13 @@
 {% block bodyCls %}pay-0{% endblock %}
 {%set hiddenFooter=true %}
 
+{% block leftTopContent %}
+<a href="javascript:self.history.go(-1)">
+  <i class="am-header-icon am-icon-mail-reply"></i>
+</a>
+{%endblock%}
+
+
 {% block content %}
 
 
@@ -26,9 +33,18 @@
           <div class="am-u-sm-8">{{data.flight_no}}</div>
         </div>
         {% if data.service_type==0 %}
+	  	<div class="am-g am-g-fixed">
+	  		<div class="am-u-sm-4 mx-pay-u-sm-3">用车人姓名</div>
+	  		<div class="am-u-sm-8">{{data.order_username}}</div>
+	  	</div>
         <div class="am-g am-g-fixed">
           <div class="am-u-sm-4 mx-pay-u-sm-3">接机牌姓名</div>
           <div class="am-u-sm-8">{{data.pickup_card_name}}</div>
+        </div>
+        {% else %}
+        <div class="am-g am-g-fixed">
+          <div class="am-u-sm-4 mx-pay-u-sm-3">用车人姓名</div>
+          <div class="am-u-sm-8">{{data.order_username}}</div>
         </div>
         {% endif %}
         <div class="mx-pay-content">

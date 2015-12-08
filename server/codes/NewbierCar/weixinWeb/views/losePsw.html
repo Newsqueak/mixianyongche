@@ -127,14 +127,14 @@
 
         });
         $scope.enabledAgainSMS = function () {
-            if($scope.smsTime===""){$scope.smsTime=20};
+            if($scope.smsTime===""){$scope.smsTime=15};
             $("#sendSMSBtn").attr("disabled", "disabled");
             $scope.smsTime--;
             $scope.$apply()
             if ($scope.smsTime == -1) {
-                if($("#newpsw").css("display")=="block"){
+                //if($("#newpsw").css("display")=="block"){
                     $("#sendSMSBtn").removeAttr("disabled");
-                }
+                //}
 
                 $scope.smsTime="";
             } else {

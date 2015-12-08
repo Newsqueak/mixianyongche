@@ -217,7 +217,8 @@
             $("#doc-modal-1").modal({
                 onConfirm: function (e) {
                     $.get("orderCancel?order_no=" + $scope.order.order_no, function (json) {
-                        alert(json)
+                        alert("操作成功!")
+                        self.location.href="orderList";
                     })
                 }
             })

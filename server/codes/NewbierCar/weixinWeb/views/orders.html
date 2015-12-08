@@ -49,7 +49,7 @@
     <div class="am-tabs-bd ng-cloak" ng-cloak>
     <div class="am-tab-panel am-fade am-in am-active" id="tab1">
 
-        <div class="item" ng-click="orderView(order.order_no)" ng-repeat="order in orders | filter:{ pay_status: 0 }">
+        <div class="item" ng-click="orderView(order.order_no)" ng-repeat="order in orders | filter:{ pay_status: '0' }:true">
 
         <div class="mx-orderlist-tishi">
                 <span>请在<span ng-bind="order.over_time | mydate"></span>之前付款</span>
@@ -73,7 +73,7 @@
 
     <div class="am-tab-panel am-fade" id="tab2">
         <div class="mx-list-content" ng-click="orderView(order.order_no)"
-             ng-repeat="order in orders | filter:{ pay_status: 1 }">
+             ng-repeat="order in orders | filter:{ pay_status: '1' }:true">
             <div><b>业务类型：<span ng-bind="order.service_type|serviceType"></span></b><span>
                     <a class="am-badge am-badge-danger am-radius mx-icon-chevron-right">支付成功</a></span>
             </div>

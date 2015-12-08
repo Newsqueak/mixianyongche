@@ -14,6 +14,7 @@
 
 {% block content %}
 <div class="mx-orderlist-body-bg" ng-controller="orderFill">
+
     <div class="mx-order">
         <div class="am-g am-g-fixed">
 
@@ -49,7 +50,7 @@
         </div>
     </div>
 
-    <form action="payment" class="am-form am-form-inline mx-order-form" method="post" id="orderFillForm">
+    <form action="payment" role="form" class="am-form am-form-inline mx-order-form" method="post" id="orderFillForm">
 
         <div class="am-g am-g-collapse am-g-fixed mx-input">
             <div class="am-u-sm-3 mx-order-form-3">手机号码</div>
@@ -285,13 +286,13 @@
             slide: function (event, ui) {
                 $scope.sj_before_hours = parseInt(ui.value, 10);
                 var _date = new Date($scope.order_use_car_time_old);
-                _date.setHours(-$scope.sj_before_hours + _date.getHours());
+                _date.setHours(3-$scope.sj_before_hours + _date.getHours());
                 $scope.order_use_car_time = _date;
                 $scope.$apply();
             }
         });
         $scope.submit = function () {
-            if (isNaN(parseInt($scope.temOrder.order_phone))) {
+            if (!(/[0-9]{11}/).test($scope.temOrder.order_phone)) {
                 alert("请输入正确的手机号码");
                 return;
             }
@@ -303,15 +304,23 @@
                 alert("请输入正确的电子邮箱");
                 return;
             }
-            if ($scope.temOrder.JIEJI_SONGJI == 0 && $scope.temOrder.order_pickup_card_name == "") {
-                alert("请输入接机牌上添加的姓名");
+            if((""+$scope.temOrder.order_username).replace(/(^s*)|(s*$)/g, "").length ==0) {
+                alert("请输入用车人姓名");
                 return;
+            }
+            if ($scope.temOrder.JIEJI_SONGJI == 0){
+
+                if((""+$scope.temOrder.order_pickup_card_name).replace(/(^s*)|(s*$)/g, "").length ==0) {
+                    alert("请输入接机牌上添加的姓名");
+                    return;
+                }
             }
             $scope.temOrder.order_use_car_time = $scope.order_use_car_time.Format("yyyy-MM-dd hh:mm");
 //            if ($.cookie("token") != undefined) {
 //                $scope.temOrder.token = $.cookie("token");
 //            }
             $.cookie("temOrder", JSON.stringify($scope.temOrder));
+
             $("form").submit();
         }
     })
