@@ -4,15 +4,15 @@ var config = require("../../config/config");
 var fs = require('fs');
 var path = require('path');
 
-
-function postOptions(url, data, isFullUrl) {
+//idfv=$openid，User-Agent=weixinWeb:${用户微信用户名}，如梁椿是用户，则是weixinWeb:Newsqueak，
+function postOptions(weixinAccount, url, data, isFullUrl) {
     var _url = !isFullUrl ? config.selfApiURL + url : url;
 
     var options = {
         url: _url,
         headers: {
-            "User-Agent": "test",
-            "idfv": "kdjfkdkflsdkfjdkfjkdjf"
+            "User-Agent": "weixinWeb:" + weixinAccount.nickname,
+            "idfv": "" + weixinAccount.openid
         },
         form: data
     };
@@ -27,8 +27,8 @@ exports.queryPage = function (req, res, next) {
 };
 
 exports.carsPage = function (req, res, next) {
-    console.log(req.body)
-    common.RemoteAPI.post(postOptions('/1/car/booking.do', req.body), function (e, r, result) {
+
+    common.RemoteAPI.post(postOptions((req.weixinAccount || {}), '/1/car/booking.do', req.body), function (e, r, result) {
         if (e) {
             next(e);
         } else {
@@ -118,7 +118,7 @@ exports.orderFillingPage = function (req, res, next) {
 exports.orderDetailsPage = function (req, res, next) {
 
     if (req.query.order_no != undefined && req.query.order_no != "") {
-        common.RemoteAPI.post(postOptions('/1/order/details.do', {order_no: req.query.order_no}), function (e, r, result) {
+        common.RemoteAPI.post(postOptions((req.weixinAccount || {}), '/1/order/details.do', {order_no: req.query.order_no}), function (e, r, result) {
             if (e) {
                 return next(e);
             } else {
@@ -168,7 +168,7 @@ exports.orderDetailsPage = function (req, res, next) {
  */
 exports.orderCancel = function (req, res, next) {
     if (req.query.order_no != undefined && req.query.order_no != "") {
-        common.RemoteAPI.post(postOptions('/1/order/cancelling.do', {order_no: req.query.order_no}), function (e, r, result) {
+        common.RemoteAPI.post(postOptions((req.weixinAccount || {}), '/1/order/cancelling.do', {order_no: req.query.order_no}), function (e, r, result) {
             if (e) {
                 return res.status(412).end(e)
             } else {
@@ -185,7 +185,7 @@ exports.orderListPage = function (req, res, next) {
 
     if (req.cookies.token && req.cookies.token != "" && req.cookies.token != undefined) {
         console.log('a');
-        common.RemoteAPI.post(postOptions('/1/order/list.do', {token: req.cookies.token}), function (e, r, result) {
+        common.RemoteAPI.post(postOptions((req.weixinAccount || {}), '/1/order/list.do', {token: req.cookies.token}), function (e, r, result) {
 
             if (e) {
                 return next(e);
@@ -221,7 +221,7 @@ exports.paymentPage = function (req, res, next) {
         if (token != undefined) {
             temOrderObj.token = token;
         }
-        common.RemoteAPI.post(postOptions('/1/order/creation.do', temOrderObj), function (e, r, result) {
+        common.RemoteAPI.post(postOptions((req.weixinAccount || {}), '/1/order/creation.do', temOrderObj), function (e, r, result) {
             if (e) {
                 return next(e);
             } else {
@@ -249,7 +249,7 @@ exports.weixinPlanPayPage = function (req, res, nex) {
 exports.myCenterPage = function (req, res, next) {
 
     if (req.cookies.token && req.cookies.token != "" && req.cookies.token != undefined) {
-        common.RemoteAPI.post(postOptions('/1/user/sync_profile.do', {token: req.cookies.token}), function (e, r, result) {
+        common.RemoteAPI.post(postOptions((req.weixinAccount || {}), '/1/user/sync_profile.do', {token: req.cookies.token}), function (e, r, result) {
 
             if (e) {
                 return res.status(412).end(e)
@@ -286,7 +286,7 @@ exports.userinfoUpdate = function (req, res, next) {
         postData.fields = req.body.field;
         postData[req.body.field] = req.body.value;
         console.log(postData)
-        common.RemoteAPI.post(postOptions('/1/user/send_profile.do', postData), function (e, r, result) {
+        common.RemoteAPI.post(postOptions((req.weixinAccount || {}), '/1/user/send_profile.do', postData), function (e, r, result) {
 
             if (e) {
                 return res.status(412).end(e)
@@ -312,7 +312,7 @@ exports.loginPage = function (req, res, next) {
 //登录action ajax
 exports.login = function (req, res, next) {
     console.log(req.body);
-    common.RemoteAPI.post(postOptions('/1/user/login.do', req.body), function (e, r, result) {
+    common.RemoteAPI.post(postOptions((req.weixinAccount || {}), '/1/user/login.do', req.body), function (e, r, result) {
 
         if (e) {
             res.status(412).end(e)
@@ -370,7 +370,7 @@ exports.registerPage = function (req, res, next) {
  * */
 exports.registerSubmit = function (req, res, next) {
     //服务器验证短信
-    common.RemoteAPI.post(postOptions('/1/user/existence.do', req.body), function (e, r, result) {
+    common.RemoteAPI.post(postOptions((req.weixinAccount || {}), '/1/user/existence.do', req.body), function (e, r, result) {
 
             if (e) {
                 return res.status(412).end(e)
@@ -384,7 +384,7 @@ exports.registerSubmit = function (req, res, next) {
                 }
                 else {
 
-                    common.RemoteAPI.post(postOptions('http://authcode.laobingke.com:9000/1/auth_code/verifying', req.body, true), function (ee, rr, rresult) {
+                    common.RemoteAPI.post(postOptions((req.weixinAccount || {}), 'http://authcode.laobingke.com:9000/1/auth_code/verifying', req.body, true), function (ee, rr, rresult) {
                         if (ee) {
                             return res.status(412).end(ee)
                         } else {
@@ -392,7 +392,7 @@ exports.registerSubmit = function (req, res, next) {
                             var smsjson = JSON.parse(rresult);
                             console.log(rresult);
                             if (smsjson.code == 0) {
-                                common.RemoteAPI.post(postOptions('/1/user/signup.do', req.body), function (eee, rrr, rrresult) {
+                                common.RemoteAPI.post(postOptions((req.weixinAccount || {}), '/1/user/signup.do', req.body), function (eee, rrr, rrresult) {
                                     if (eee) {
                                         res.status(412).end(eee)
                                     } else {
@@ -459,7 +459,7 @@ exports.registerSendSMS = function (req, res, next) {
      phone = "13581897657"
      country_code = "86"
      * */
-    common.RemoteAPI.post(postOptions('/1/user/existence.do', req.body), function (e, r, result) {
+    common.RemoteAPI.post(postOptions((req.weixinAccount || {}), '/1/user/existence.do', req.body), function (e, r, result) {
         if (e) {
             return res.status(412).end(e)
         } else {
@@ -474,7 +474,7 @@ exports.registerSendSMS = function (req, res, next) {
                 req.body.phone = parseInt(req.body.phone, 10);
                 req.body.country_code = parseInt(req.body.country_code, 10);
                 //接口服务器发送短信
-                common.RemoteAPI.post(postOptions('http://authcode.laobingke.com:9000/1/auth_code/emitting', req.body, true), function (ee, rr, rresult) {
+                common.RemoteAPI.post(postOptions((req.weixinAccount || {}), 'http://authcode.laobingke.com:9000/1/auth_code/emitting', req.body, true), function (ee, rr, rresult) {
 
 
                     if (ee) {
@@ -507,7 +507,7 @@ exports.editPswSubmitPage = function (req, res, next) {
     req.body.token = req.cookies.token
 
     delete  req.body.renew_password;
-    common.RemoteAPI.post(postOptions('/1/user/update_password.do', req.body), function (e, r, result) {
+    common.RemoteAPI.post(postOptions((req.weixinAccount || {}), '/1/user/update_password.do', req.body), function (e, r, result) {
         if (e) {
             return res.status(412).end(e)
         } else {
@@ -540,7 +540,7 @@ exports.lostPsw_phone = function (req, res, next) {
     //request send sms
     var data={phone:req.body.phone,country_code:req.body.country_code};
 
-    common.RemoteAPI.post(postOptions('/1/user/existence.do', data), function (e, r, result) {
+    common.RemoteAPI.post(postOptions((req.weixinAccount || {}), '/1/user/existence.do', data), function (e, r, result) {
         if (e) {
             return res.status(412).end(e)
         } else {
@@ -564,7 +564,7 @@ exports.lostPsw_sendsms = function (req, res, next) {
 
         var data = req.cookies.losePsw;
         //接口服务器发送短信
-        common.RemoteAPI.post(postOptions('http://authcode.laobingke.com:9000/1/auth_code/emitting', data, true), function (ee, rr, rresult) {
+        common.RemoteAPI.post(postOptions((req.weixinAccount || {}), 'http://authcode.laobingke.com:9000/1/auth_code/emitting', data, true), function (ee, rr, rresult) {
 
 
             if (ee) {
@@ -593,7 +593,7 @@ exports.lostPsw_verifysms = function (req, res, next) {
             country_code :req.cookies.losePsw.country_code ,
             captcha:req.body.captcha
         };
-        common.RemoteAPI.post(postOptions('http://authcode.laobingke.com:9000/1/auth_code/verifying', data, true), function (ee, rr, rresult) {
+        common.RemoteAPI.post(postOptions((req.weixinAccount || {}), 'http://authcode.laobingke.com:9000/1/auth_code/verifying', data, true), function (ee, rr, rresult) {
             if (ee) {
                 return res.status(412).end(ee)
             } else {
@@ -617,7 +617,7 @@ exports.lostPsw_reset = function (req, res, next) {
             country_code :req.cookies.losePsw.country_code ,
             new_password :req.body.new_password
         };
-        common.RemoteAPI.post(postOptions('/1/user/forget_password.do', data, false), function (ee, rr, rresult) {
+        common.RemoteAPI.post(postOptions((req.weixinAccount || {}), '/1/user/forget_password.do', data, false), function (ee, rr, rresult) {
             if (ee) {
                 return res.status(412).end(ee)
             } else {

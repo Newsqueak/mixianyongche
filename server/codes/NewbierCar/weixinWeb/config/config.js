@@ -15,6 +15,7 @@ var extend = require('util')._extend;
 
 var development = {
     selfApiURL: "http://182.92.195.92:9000",
+    wxOauthCallbackBaseURL: "http://weixintest.laobingke.com",
     weixinApp: {
         appID: "wxcd529639221d9aaa",
         appsecret: "14290f263e76885bb086a99919c88a1d",
@@ -25,6 +26,7 @@ var development = {
 
 var production = {
     selfApiURL: "http://10.172.241.236:9000",
+    wxOauthCallbackBaseURL: "http://weixin.laobingke.com",
     weixinApp: {
         appID: "wxa29fffed6c0726da",
         appsecret: "ae88eb2910ff8165f6327bd6143581b5",
