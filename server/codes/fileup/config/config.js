@@ -15,10 +15,6 @@ var extend = require('util')._extend;
 
 var production = {
     ossOptions: {
-        "accessKeyId": "aun04T1GzbQhoZPv",
-        "secretAccessKey": "mesBRp1mgVmvIXp17XC2GQL8ribf86",
-        "endpoint": "http://oss-cn-beijing-internal.aliyuncs.com",
-        "apiVersion": "2013-10-15"
     }
 };
 
